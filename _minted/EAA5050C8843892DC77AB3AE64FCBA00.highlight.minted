@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{nameFamily}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FunExtractName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Scope}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{TermTelescope}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Family}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{)}
+\end{MintedVerbatim}

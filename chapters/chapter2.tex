@@ -1,0 +1,275 @@
+\chapter{Literature Review}
+\label{chap:lr}
+
+\section{Name Capture}
+
+The problem of name capture is fundamental in programming language implementation, theorem proving, and formal verification systems. 
+When substituting expressions containing bound variables, naïve replacement can lead to variable capture, where a free variable in the substituted term becomes bound, changing the meaning of the expression. 
+For example, in lambda calculus, substituting \texttt{y} for \texttt{x} in \texttt{(\textlambda y.x)} would incorrectly yield \texttt{(\textlambda y.y)} if performed naïvely. 
+Various approaches to preventing this issue have been developed, each with trade-offs between safety, efficiency, and expressiveness.
+
+The simplest approach, often called "naïve substitution," \cite{bound} uses explicit variable names and requires careful renaming during substitution to avoid capture. While intuitive, this approach is error-prone and inefficient as it requires maintaining and checking against a global context of variable names. De Bruijn indices \cite{deBruijn1972} offer an alternative by replacing names with numeric indices representing binding distance. This solves name capture but creates other issues: terms become difficult to read, and substitution still requires traversing the entire abstract syntax tree (AST) to adjust indices.
+
+Higher-Order Abstract Syntax (HOAS) \cite{HOAS} leverages the host language's binding mechanisms, providing excellent safety but often at the cost of expressiveness when implementing algorithms that need to inspect or transform bound variables. The "rapier" technique used in the Glasgow Haskell Compiler \cite{haskellCompilerSecrets} offers better efficiency by maintaining a stateless local scope and performing capture-avoiding substitution in one pass. However, as noted by Maclaurin et al. \cite{foil2023}, it lacks type safety, making it easy to forget scope extensions or necessary renamings when implementing complex language features.
+
+\subsection{Intrinsic Scoping}
+
+Intrinsic scoping addresses the safety issues of previous approaches by encoding scope information directly in types. With this technique, the type system ensures that all terms are well-scoped by construction, making ill-scoped terms impossible to express. Bird and Paterson's approach \cite{BirdPaterson1999} uses nested data types to represent De Bruijn indices at the type level. For Haskell:
+
+\begin{minted}[breaklines=true]{haskell}
+data Exp a
+    = Var a
+    | App (Exp a) (Exp a)
+    | Lam (Exp (Maybe a))
+\end{minted}
+
+Here, the type parameter changes when going under a binder (using \texttt{Maybe}), enforcing proper scope extension. While this guarantees safety, it still requires traversing and updating all variables during substitution, impacting efficiency. Additionally, the deep polymorphic recursion consumes significant memory and complicates implementing algorithms that work under binders.
+
+Kmett's \texttt{bound} library \footnote{\url{https://hackage.haskell.org/package/bound}} extends this approach with more flexible representations like locally nameless \cite{Chargueraud2012} and co-de-Bruijn indices \cite{McBride2018}. These variations improve ergonomics but still face fundamental efficiency limitations due to their reliance on explicit index manipulation.
+
+\subsection{The Foil}
+
+The Foil \cite{foil2023} resolves the efficiency-safety trade-off by combining the stateless, single-pass algorithm of the rapier with strong type-level guarantees. 
+It implements the Barendregt convention \cite{Barendregt}, claiming all bound variables to be distinct and different from free variables, with type safety.
+The Foil achieves this by indexing all expressions, names, and scopes with phantom a type parameter \texttt{S} that represents the current set of in-scope variables. 
+\texttt{S} is defined as \haskell{data S = VoidS}
+
+So every entity in the Foil's representation is scope-indexed by a kind \haskell{S}:
+
+\begin{itemize}
+    \item \haskell{newtype Name (n :: S)} is the type of a name that belongs to the scope \haskell{n}. The name's underlying representation is a machine-sized integer.
+
+    \item \haskell{newtype Scope (n :: S)} is the type of a scope that contains exactly names of type \haskell{Name n}.
+    Similarly to the rapier, it stores an integer map \cite{OkasakiGill1998} to lookup and extend the scope.
+    \begin{itemize}
+        \item if \haskell{scope1 :: Scope n} and \haskell{scope2 :: Scope n}, then \haskell{scope1 == scope2}
+        \item if \haskell{scope :: Scope n} and \haskell{x : Name n}, then \haskell{x `member` scope == True}.
+    \end{itemize}
+
+    \item \haskell{newtype NameBinder (n :: S) (l :: S)} is the type of a binder that introduces a single new name. It extends the scope indexed by \haskell{n} into the scope indexed by \haskell{l} with the name contained in it.
+    New instances of \haskell{NameBinder n l} can only be created with a \haskell{withFresh} function, which introduces new instances of \haskell{S}-indexed types with rank-2 polymorphism:
+    \begin{minted}[breaklines=true]{haskell}
+withFresh :: Distinct n 
+    => Scope n
+    -> (forall l. (Distinct l, Ext n l) => NameBinder n l -> r) 
+    -> r
+    \end{minted}
+\end{itemize}
+
+With these data types, a simply-typed lambda calculus can be represented as the following:
+\begin{minted}[breaklines=true]{haskell}
+data Expr n where
+    Var :: Name n -> Expr n
+    App :: Expr n -> Expr n -> Expr n
+    Lam :: NameBinder n l -> Expr l -> Expr n
+\end{minted}
+
+Here, every expression is indexed with a scope \haskell{s}, as well as variables, which are represented as \haskell{Name n}. It is noteworthy that the body of the lambda expression is indexed with a different scope \haskell{l}, which is exactly the scope \haskell{NameBinder n l} creates. Thus, when going under a binder, the type of the sub-expression changes, imposing a type-level constraint on all the terms within it.
+
+When implementing substitution, the type system ensures:
+
+\begin{itemize}
+    \item Substitution is applied to all sub-terms
+    \item Scope is properly extended when entering binders
+    \item Variables are correctly renamed to avoid capture
+\end{itemize}
+
+The Foil's efficiency comes from its \texttt{Sinkable} type class, which allows "sinking" expressions into extended scopes:
+
+\begin{minted}[breaklines=true]{haskell}
+sink :: (Sinkable e, Distinct n, Ext n l) => e n -> e l
+sink = unsafeCoerce
+\end{minted}
+
+Since the Foil uses name-based representation rather than indices, and the underlying representation of names remains unchanged between scopes, this operation is a type-safe zero-cost coercion. This contrasts with De Bruijn-based approaches that must traverse and increment every index.
+
+Despite its advantages, the Foil requires manually writing syntax representations and substitution implementations for each language, creating boilerplate code and limiting reusability across different languages.
+
+\subsection{Free Foil}
+
+Free Foil bridges the gap between generic syntax representation and efficient, type-safe substitution. It combines Kudasov's free scoped monads \cite{freemonads2024} with the Foil to automatically generate well-scoped syntax with capture-avoiding substitution from a language's second-order signature.
+The core idea is to parameterize abstract syntax additionally by a bifunctorial signature \texttt{sig} that distinguishes between regular sub-terms and scoped sub-terms (those that may access newly bound variables) and, additionally, by the \texttt{binder}:
+
+\begin{minted}[breaklines=true]{haskell}
+data ScopedAST binder sig n where
+    ScopedAST :: binder n l -> AST binder sig l -> ScopedAST binder sig n
+data AST binder sig n where
+    Var :: Foil.Name n -> AST binder sig n
+    Node 
+        :: sig (ScopedAST binder sig n) (AST binder sig n) 
+        -> AST binder sig n
+\end{minted}
+
+Given a bifunctorial signature \texttt{sig}, the \texttt{AST} data type automatically generates the complete syntax with proper scoping. 
+For simply-typed lambda calculus:
+
+\begin{minted}[breaklines=true]{haskell}
+data ExprF scope term
+    = AppF term term
+    | LamF scope
+type Expr = AST NameBinder ExprF
+\end{minted}
+
+\texttt{CoSinkable} typeclass introduces \texttt{coSinkabilityProof} to support patterns. Given a renaming function and a pattern, it provides a renaming function for the variables bound by the pattern, and a refreshed version of the pattern, hence, making sure variables in patterns are refreshed properly to avoid name capture.
+
+The key innovation is that Free Foil inherits the Foil's efficient substitution algorithm while maintaining complete type safety. The \texttt{Sinkable} instance for \texttt{AST} enables zero-cost scope extensions, and capture-avoiding substitution is derived generically:
+
+\begin{minted}[breaklines=true]{haskell}
+newtype Substitution (e :: S -> Type) (i :: S) (o :: S) 
+    = UnsafeSubstitution (IntMap (e o))
+substitute :: (Bifunctor sig, Distinct o, CoSinkable binder, SinkableK binder) 
+    => Scope o 
+    -> Substitution (AST binder sig) i o 
+    -> AST binder sig i 
+    -> AST binder sig o
+\end{minted}
+
+Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
+
+Additionally, Free Foil supports a template-based approach where scope-safe representations can be automatically derived from naïve AST definitions using Template Haskell, allowing seamless integration with parser generators like BNF Converter (BNFC) \cite{ForsbergRanta2004}.
+
+\section{Language Server Protocol (LSP)}
+
+The Language Server Protocol \cite{lsp} standardizes communication between language servers and editors, allowing a common interface for diverse programming environments.
+
+\subsubsection{Rust Language Server}
+
+Rust-analyzer \footnote{\url{https://github.com/rust-lang/rust-analyzer/tree/master}} represents a modern approach with internal architecture structured as a set of libraries for analyzing Rust code, emphasizing performance and correctness. 
+Its design focuses on providing comprehensive language understanding through incremental analysis.
+
+\subsubsection{Go Language Server}
+
+Gopls \footnote{\url{https://go.dev/gopls/}} aims to be a full LSP implementation that standardizes features according to the LSP specification while maintaining cleanliness and robustness. 
+It has achieved community-wide adoption as the definitive Go language server, supported by the entire Go ecosystem.
+
+\subsubsection{Python Language Server}
+
+Python implementations often build upon existing analysis libraries like Jedi \footnote{\url{https://pypi.org/project/jedi/}}, demonstrating how LSP servers can leverage mature language analysis tools while providing standardized editor integration.
+
+\subsubsection{Haskell Language Server}
+
+The Haskell Language Server (HLS) \footnote{\url{https://github.com/haskell/haskell-language-server}} serves as the primary GHC-oriented LSP implementation for Haskell. It functions as an integration layer that combines multiple analysis engines and plugins to provide comprehensive language support. HLS architecture employs a plugin system that allows modular extension of functionality
+
+\subsection{Libraries for LSP}
+
+Some frameworks propose a general language server implementation following Microsoft LSP, simplifying language server development for any target.
+
+\subsubsection{Eclipse LSP4J}
+
+LSP4J \footnote{\url{https://github.com/eclipse-lsp4j/lsp4j}} is a generic LSP implementation framework allowing to implement language servers in Java. Metals for Scala \footnote{\url{https://github.com/scalameta/metals}} and Kotlin Language Server \footnote{\url{https://github.com/Kotlin/kotlin-lsp}} both base on LSP4J.
+
+\subsubsection{Haskell LSP}
+
+The \texttt{haskell/lsp} \footnote{\url{https://github.com/haskell/lsp}} library family (including \texttt{lsp-types} and \texttt{lsp-test}) provides Haskell with low-level protocol handling capabilities. 
+This ecosystem offers type-safe implementations of LSP message types and communication handling. 
+The library has been battle-tested through its use in production systems like Haskell Language Server (HLS).
+
+TODO: describe the LSP functionality relevant to the implementation
+
+\subsection{Comparative Analysis}
+
+\subsubsection{Advantages of Current Approaches}
+
+\begin{itemize}
+\item Standardization: LSP enables editor-agnostic tooling development 
+\item Modular Architecture: Modern implementations like HLS support plugin-based extensibility 
+\item Performance Focus: Leading implementations prioritize incremental analysis and caching strategies
+\item Community Consolidation: Languages like Go have achieved unified implementations (gopls) 
+\end{itemize}
+
+
+\subsubsection{Disadvantages and Challenges}
+
+\begin{itemize}
+\item Performance Issues: Haskell implementations face challenges with Template Haskell and large projects 
+\item Concurrency Limitations: Some LSP servers struggle with concurrent usage patterns 
+\item Protocol Complexity: Full LSP specification compliance requires significant implementation effort
+\item Resource Consumption: Language servers can consume substantial CPU and memory resources during analysis 
+\end{itemize}
+
+\section{Conclusion}
+
+This literature review has explored two complementary areas: techniques for safe and efficient name handling in language implementation, and the practical ecosystem of LSP tooling.
+
+On the theoretical side, approaches to name capture have evolved from error-prone manual renaming to intrinsically scoped systems like the Foil and Free Foil. These modern solutions enforce scoping correctness at the type level while enabling zero-cost substitutions—offering both safety and performance.
+
+On the practical side, LSP implementations such as \texttt{gopls}, \texttt{rust-analyzer}, and the Haskell Language Server demonstrate how standardized protocols enable powerful, editor-agnostic developer tooling. Many of these servers—like Python’s—rely on libraries such as Jedi for static analysis and autocompletion.
+
+Yet a gap remains: despite advances in type-safe scoping, most LSPs still use traditional, extrinsically scoped ASTs, leaving them vulnerable to subtle binding bugs and inefficiencies. Integrating intrinsically scoped representations like the Foil into language servers presents a promising path toward more robust and performant tooling—especially for languages with rich binding semantics.
+
+This thesis builds on that opportunity, aiming to bridge formal scoping guarantees with real-world LSP development.
+
+% The evolution of techniques for handling bound variables reflects a persistent tension between safety, efficiency, and expressiveness. Early approaches like naive substitution and De Bruijn indices prioritize correctness but sacrifice performance and ergonomics. The foil represents a significant advance by combining the efficiency of the rapier algorithm with strong type-level guarantees, ensuring capture-avoiding substitution is both fast and correct.
+
+% Free Foil builds upon this foundation by introducing generic programming techniques that eliminate boilerplate while preserving the foil's performance characteristics. By deriving scope-safe syntax representations directly from second-order signatures, it makes the foil's benefits accessible to language implementers without requiring deep expertise in advanced type system features.
+
+% This work demonstrates that sophisticated type system features can be harnessed not just for safety but also for code generation and abstraction, allowing implementers to focus on language semantics rather than the intricacies of variable binding. The resulting framework supports rapid prototyping of languages with complex binding structures while maintaining the performance necessary for practical use.
+
+% Future work could explore further optimizations to close the small performance gap between direct foil implementations and Free Foil, as well as extending the approach to support more complex binding patterns and integration with proof assistants and theorem provers requiring high-assurance implementations of capture-avoiding substitution.
+
+
+
+
+% \Blindtext[2]
+
+% \section{Another Section}
+% \Blindtext[1]
+% \newpage
+% With the widespread of computing systems, information processing, and net working, the practice of replacing paper documentation to electronic documentation has become more and more common. Electronic documentation within the workplace has several advantages over the traditional one, such as being easy to share, copy and edit the document. However, these advantages also present a problem. A malefactor, having access to the system, can easily copy and leak the document, without leaving any trace. Such actions are virtually undetectable in most systems, so, the malefactor goes unpunished. In this thesis, we propose one solution to the problem: digital watermarking. 
+
+% Every electronic document within the protected system is marked with an invisible digital watermark, containing information about the user, accessing this particular document. Therefore, in case the protected company discovers the leaked document, they will be able to identify the machine of the malicious person and time when the document was leaked. This will allow inflicting punishment on the malefactor, recovering the costs of the leak, and potentially preventing future ones. 
+
+% \begin{longtable}{c|c}
+% \caption[This is the title I want to appear in the List of Tables]{Simulation Parameters} \label{table:secsimulation_params} \\
+% \hline
+% A & B  \\
+% \hline
+% \endfirsthead
+% \multicolumn{2}{@{}l}{} \\
+% \hline
+% A & B \\
+% \hline
+% \endhead
+% \hline
+%  \textbf{Parameter} & \textbf{Value}\\
+%  \hline
+%  Number of vehicles & $|\mathcal{V}|$\\
+%  \hline
+%  Number of RSUs & $|\mathcal{U}|$\\
+%  \hline
+%  RSU coverage radius & 150 m\\
+%  \hline
+%  V2V communication radius & 30 m\\
+%  \hline
+%  Smart vehicle antenna height & 1.5 m\\
+%  \hline
+%  RSU antenna height & 25 m\\
+%  \hline
+%  Smart vehicle maximum speed & $v_{max}$ m/s\\
+%  \hline
+%  Smart vehicle minimum speed & $v_{min}$ m/s\\
+%  \hline
+%  Common smart vehicle cache capacities & $[50, 100, 150, 200, 250]$ mb\\
+%  \hline
+%  Common RSU cache capacities & $[5000,1000,1500,2000,2500]$ mb\\
+%  \hline
+%  Common backhaul rates & $[75, 100, 150]$ mb/s\\
+%  \hline
+% \end{longtable}
+
+% \begin{figure}[hbt]
+% \centering
+% \includegraphics[]{figs/images.png}
+% \caption{One kernel at $x_s$ (\emph{dotted kernel}) or two kernels at
+% $x_i$ and $x_j$ (\textit{left and right}) lead to the same summed estimate
+% at $x_s$. This shows a figure consisting of different types of
+% lines. Elements of the figure described in the caption should be set in
+% italics, in parentheses, as shown in this sample caption.}
+% \label{fig:secex}
+% \end{figure}
+
+% This description implies several essential properties of the task at hand:
+% \begin{enumerate}
+%     \item Watermark must contain all necessary information, but still, be placeable and recognizable even on smaller images. The produced watermark must be compact but have the possibility to store enough information. 
+%     \item To prevent easy tampering, the watermark must be invisible to the naked eye (and, preferably, to basic image parsing tools). If malefactor does not know about the existence of watermark, they might not even try to remove it and disable it. 
+% \end{enumerate}

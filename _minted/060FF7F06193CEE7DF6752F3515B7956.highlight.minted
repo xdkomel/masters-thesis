@@ -1,0 +1,11 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{TermTelescope}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{k+kt}{LeafTerm}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{    }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{TermTelescope}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{k+kt}{NodeTerm}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{DExt}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{CoSinkable}\PYG{+w}{ }\PYG{n}{binder}\PYG{p}{)}
+\PYG{+w}{    }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} The term}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} The term\PYGZsq{}s binder}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{TermTelescope}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{l}\PYG{p}{]}\PYG{+w}{ }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Scoped [NodeTerm]s}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{TermTelescope}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\end{MintedVerbatim}

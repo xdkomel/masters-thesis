@@ -1,0 +1,138 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+Language servers are an essential component of modern development environments, providing rich code intelligence features such as code completion, navigation, error checking, and refactoring support. 
+The Language Server Protocol (LSP) \cite{lsp}, introduced by Microsoft, has standardized communication between language servers and editors, allowing a common interface for diverse programming environments. 
+There are things all language servers have in common, like storing the current environment configuration, updating it on file changes, renaming, or navigating to a symbol's definition. 
+I tried to automate some of those scenarios or provide a flexible mechanism to adjust the behavior of a language server.
+
+\section{Binding and Scopes}
+\label{sec:bindings-and-scopes}
+
+One of the most persistent aspects of language server implementation, as well as in compiler implementation, is to correctly manage variable bindings and scopes. 
+In the following Kotlin example we cannot simply replace \kotlin{x} with \kotlin{y} in the \kotlin{a}'s body when calling \kotlin{a(y)} because that would mix the local variable \kotlin{x} with the free \kotlin{y}.
+
+\begin{minted}[fontfamily=txtt]{kotlin}
+val y = 1
+fun a (x: Int): (Int) -> Int = { y -> x + y }
+a(y)
+\end{minted}
+
+I used Free-Foil \cite{freefoil2024} to handle bound identifiers. It uses free scoped monads \cite{freemonads2024}, but relies on the approach presented in the Foil \cite{foil2023}. Besides being safe and efficient, Free-Foil allows to generalize the Abstract Syntax Tree (AST), which means the implementation of navigation to a symbol's definition, renaming, or marking errors regarding scoped variables could be agnostic, thus, provided for any language with minimal effort.
+
+
+\section{Configuration}
+\label{sec:configuration}
+
+
+\section{Contribution}
+\label{sec:contribution}
+
+
+
+% This is a section. This is a citation without brackets. and this is one with brackets \cite{A}. Multiple \cite{A,B,C} Here's a reference to a subsection: \ref{sec:subsection}. Citation of an online article \cite{D}. Citation of an online proceeding \cite{F}. The body of the text and abstract must be double-spaced except for footnotes or long quotations. Fonts such as Times Roman, Bookman, New Century Schoolbook, Garamond, Palatine, and Courier are acceptable and commonly found on most computers. The same type must be used throughout the body of the text. The font size must be 10 point or larger and footnotes\footnote{This is a footnote.} must be two sizes smaller than the text\footnote{This is another footnote.} but no smaller than eight points. Chapter, section, or other headings should be of a consistent font and size throughout the ETD, as should labels for illustrations, charts, and figures.
+
+% \subsection{Creating a Subsection}
+% \label{sec:subsection}
+
+% \subsubsection{Creating a Subsubsection}
+% \subsubsection{Creating a Subsubsection}
+% \subsubsection{Creating a Subsubsection}
+
+% \paragraph{This is a heading level below subsubsection}
+
+% And this is a quote: 
+% %
+% \begin{quote}
+% \blindtext
+% \end{quote}
+
+% \begin{figure}[hbt]
+% \centering
+% \includegraphics[]{figs/images.png}
+% \caption{One kernel at $x_s$ (\emph{dotted kernel}) or two kernels at
+% $x_i$ and $x_j$ (\textit{left and right}) lead to the same summed estimate
+% at $x_s$. This shows a figure consisting of different types of
+% lines. Elements of the figure described in the caption should be set in
+% italics, in parentheses, as shown in this sample caption.}
+% \label{fig:example}
+% \end{figure}
+
+% This is a table:
+% % currsize is not set in the long table environment, so we need to set it before we set it up.
+% \makeatletter
+% \let\@currsize\normalsize
+% \makeatother
+
+% % tabular environments are set to be single-spaced in the  thesis class,  but long tables do not use tabular
+% % to get around this, set the spacing to single spacing at the start of the long table environment, and set it back to double-spacing at the end of it
+
+% \begin{longtable}{c|c|c}
+% \caption[This is the title I want to appear in the List of Tables]{This Is a Table Example} \label{tab:pfams} \\
+% \hline
+% A & B & C \\
+% \hline
+% \endfirsthead
+% \multicolumn{3}{@{}l}{} \\
+% \hline
+% A & B & C\\
+% \hline
+% \endhead
+% a1 & b1 & c1 \\
+% a2 & b2 & c2\\
+% a3 & b3 & c3\\
+% a4 & b4 & c4\\
+% \hline
+% \end{longtable}
+
+% The package ``upgreek'' allows us to use non-italicized lower-case greek letters. See for yourself: $\upbeta$, $\bm\upbeta$, $\beta$, $\bm\beta$. Next is a numbered equation:
+% \begin{align}
+% \label{eq:name}
+% \|\bm{X}\|_{2,1}={\underbrace{\sum_{j=1}^nf_j(\bm{X})}_{\text{convex}}}=\sum_{j=1}^n\|\bm{X}_{.,j}\|_2
+% \end{align}
+% The reference to equation (\ref{eq:name}) is clickable. 
+% \section[Theorems, Corollaries, Lemmas, Proofs, Remarks, Definitions and Examples]{Theorems, Corollaries, Lemmas, Proofs, Remarks, Definitions,and Examples}
+
+% \begin{theorem}
+% \label{thm:onlytheorem}
+% \blindtext
+% \end{theorem}
+
+% \begin{proof}
+% I'm a (very short) proof.
+% \end{proof}
+
+% \begin{lemma}
+% I'm a lemma.
+% \end{lemma}
+
+% \begin{corollary}
+% I include a reference to Thm. \ref{thm:onlytheorem}.
+% \end{corollary}
+
+% \begin{proposition}
+% I'm a proposition.
+% \end{proposition}
+
+% \begin{remark}
+% I'm a remark. 
+% \end{remark}
+
+% \begin{definition}
+% I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. I'm a definition. 
+% \end{definition}
+
+% \begin{example}
+% I'm an example.
+% \end{example}
+
+
+% \section[Optional table of contents heading]{Section with\\ linebreaks in\\the
+% name}
+
+
+% \Blindtext[2]
+
+
+
+

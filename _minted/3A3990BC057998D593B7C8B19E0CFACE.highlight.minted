@@ -1,0 +1,24 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{FlanType}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{IntType}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{StrType}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{BoolType}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{FunType}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{PairType}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{UnknownType}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{k+kt}{String}
+
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{PatternWildcard}\PYG{+w}{ }\PYG{n}{a}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{PatternVar}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{k+kt}{String}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{PatternPair}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
+
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{FlanF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{VarF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{k+kt}{String}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{LamF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{PatternType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{s}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{LetF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{PatternType}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{s}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{PairF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{IfF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{ConstF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{k+kt}{FlanConst}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{ErrorF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{k+kt}{String}
+\end{MintedVerbatim}

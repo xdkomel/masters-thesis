@@ -1,0 +1,10 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{ALSConfiguration}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{ALSConfiguration}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{fileExtension}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{String}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buildAsts}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{FunBuildASTs}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{findNarrowest}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{FunFindNarrowest}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{extractName}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{FunExtractName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buildTelescopes}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{FunBuildTelescopes}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{findRange}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{FunRange}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

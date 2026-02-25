@@ -1,0 +1,12 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{    }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Name}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{Family}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{Family}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{parent}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{SomeScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{children}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{SomeScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{]}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{name}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

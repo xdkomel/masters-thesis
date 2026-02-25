@@ -1,0 +1,179 @@
+@misc{lsp,
+  title = {{Language Server Protocol}},
+  url = {https://microsoft.github.io/language-server-protocol/},
+}
+
+@inproceedings{foil2023,
+  author = {Maclaurin, Dougal and Radul, Alexey and Paszke, Adam},
+  title = {The Foil: Capture-Avoiding Substitution With No Sharp Edges},
+  year = {2023},
+  isbn = {9781450398312},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3587216.3587224},
+  doi = {10.1145/3587216.3587224},
+  abstract = {Correctly manipulating program terms in a compiler is surprisingly difficult because of the need to avoid name capture. The rapier from Peyton&nbsp;Jones and Marlow [9] is a cutting-edge technique for fast, stateless capture-avoiding substitution for expressions represented with explicit names. It is, however, a sharp tool—its invariants are tricky and need to be maintained throughout the whole compiler that uses it. We describe the foil, an elaboration of the rapier that uses Haskell’s type system to enforce the rapier’s invariants statically, preventing a class of hard-to-find bugs, but without adding any run-time overheads.},
+  booktitle = {Proceedings of the 34th Symposium on Implementation and Application of Functional Languages},
+  articleno = {8},
+  numpages = {10},
+  location = {Copenhagen, Denmark},
+  series = {IFL '22}
+}
+
+@misc{freefoil2024,
+      title={Free Foil: Generating Efficient and Scope-Safe Abstract Syntax}, 
+      author={Nikolai Kudasov and Renata Shakirova and Egor Shalagin and Karina Tyulebaeva},
+      year={2024},
+      eprint={2405.16384},
+      archivePrefix={arXiv},
+      primaryClass={cs.PL},
+      url={https://arxiv.org/abs/2405.16384}, 
+}
+
+@article{deBruijn1972,
+title = {Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem},
+journal = {Indagationes Mathematicae (Proceedings)},
+volume = {75},
+number = {5},
+pages = {381-392},
+year = {1972},
+issn = {1385-7258},
+doi = {https://doi.org/10.1016/1385-7258(72)90034-0},
+url = {https://www.sciencedirect.com/science/article/pii/1385725872900340},
+author = {N.G {de Bruijn}},
+abstract = {In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the “distance” to the binding λ instead of a name attached to that λ. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.}
+}
+
+@inproceedings{HOAS,
+  author    = {Frank Pfenning and
+               Conal Elliott},
+  editor    = {Richard L. Wexelblat},
+  title     = {Higher-Order Abstract Syntax},
+  booktitle = {{Proceedings of the {ACM}} SIGPLAN'88 Conference on Programming Language
+               Design and Implementation (PLDI), Atlanta, Georgia, USA, June 22-24,
+               1988},
+  pages     = {199--208},
+  publisher = {{ACM}},
+  year      = {1988},
+  doi       = {10.1145/53990.54010},
+  timestamp = {Fri, 09 Jul 2021 14:03:46 +0200},
+  biburl    = {https://dblp.org/rec/conf/pldi/PfenningE88.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{haskellCompilerSecrets,
+  author = {Peyton Jones, Simon and Marlow, Simon},
+  title = {Secrets of the Glasgow Haskell Compiler inliner},
+  year = {2002},
+  month = {July},
+  abstract = {Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program.
+
+  In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
+
+  The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner.
+
+  The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).},
+  url = {https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/},
+  pages = {393-434},
+  journal = {Journal of Functional Programming},
+  volume = {12},
+}
+
+@article{BirdPaterson1999,
+  author = {Bird, Richard S. and Paterson, Ross}, title = {De Bruijn Notation as a Nested Datatype},
+  year = {1999},
+  issue_date = {January 1999},
+  publisher = {Cambridge University Press},
+  address = {USA},
+  volume = {9},
+  number = {1},
+  issn = {0956-7968},
+  url = {https://doi.org/10.1017/S0956796899003366},
+  doi = {10.1017/S0956796899003366},
+  abstract = {“I have no data yet. It is a capital mistake to theorise before one has data.” Sir Arthur Conan Doyle The Adventures of Sherlock Holmesde Bruijn notation is a coding of lambda terms in which each occurrence of a bound variable x is replaced by a natural number, indicating the ‘distance’ from the occurrence to the abstraction that introduced x. One might suppose that in any datatype for representing de Bruijn terms, the distance restriction on numbers would have to be maintained as an explicit datatype invariant. However, by using a nested (or non-regular) datatype, we can define a representation in which all terms are well-formed, so that the invariant is enforced automatically by the type system. Programming with nested types is only a little more difficult than programming with regular types, provided we stick to well-established structuring techniques. These involve expressing inductively defined functions in terms of an appropriate fold function for the type, and using fusion laws to establish their properties. In particular, the definition of lambda abstraction and beta reduction is particularly simple, and the proof of their associated properties is entirely mechanical.},
+  journal = {J. Funct. Program.},
+  month = jan,
+  pages = {77–91},
+  numpages = {15}
+}
+
+@misc{bound,
+  title={Bound},
+  url={{https://www.schoolofhaskell.com/user/edwardk/bound}},
+  journal={School of Haskell},
+  publisher={FP Complete},
+  author={Kmett, Edward},
+  year={2015},
+  month={12},
+  note = {Accessed: 2023-01-21}
+}
+
+@article{Chargueraud2012,
+  author       = {Arthur Chargu{\'{e}}raud},
+  title        = {The Locally Nameless Representation},
+  journal      = {J. Autom. Reason.},
+  volume       = {49},
+  number       = {3},
+  pages        = {363--408},
+  year         = {2012},
+  url          = {https://doi.org/10.1007/s10817-011-9225-2},
+  doi          = {10.1007/S10817-011-9225-2},
+  timestamp    = {Wed, 02 Sep 2020 13:30:05 +0200},
+  biburl       = {https://dblp.org/rec/journals/jar/Chargueraud12.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{McBride2018,
+  author       = {Conor McBride},
+  editor       = {Robert Atkey and
+                  Sam Lindley},
+  title        = {Everybody's Got To Be Somewhere},
+  booktitle    = {Proceedings of the 7th Workshop on Mathematically Structured Functional
+                  Programming, MSFP@FSCD 2018, Oxford, UK, 8th July 2018},
+  series       = {{EPTCS}},
+  volume       = {275},
+  pages        = {53--69},
+  year         = {2018},
+  url          = {https://doi.org/10.4204/EPTCS.275.6},
+  doi          = {10.4204/EPTCS.275.6},
+  timestamp    = {Mon, 10 Sep 2018 16:20:34 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1807-04085.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@misc{freemonads2024,
+  title={{Free Monads, Intrinsic Scoping, and Higher-Order Preunification}},
+  author={Nikolai Kudasov},
+  year={2024},
+  booktitle = {Trends in Functional Programming: 25th International Symposium, TFP 2024, Orange, NJ, USA, January 10–12, 2024},
+  location = {Orange, NJ, USA},
+  eprint={2204.05653},
+  archivePrefix={arXiv},
+  primaryClass={cs.LO},
+  note={To appear in \textit{TFP 2024}}
+}
+
+@inproceedings{ForsbergRanta2004,
+  title={Demonstration Abstract : BNF Converter},
+  author={Markus Forsberg and Aarne Ranta},
+  year={2004},
+  url={https://api.semanticscholar.org/CorpusID:9335858}
+}
+
+@article{Barendregt,
+author = {Barendregt, Henk (Hendrik) and Barendsen, E.},
+year = {1984},
+month = {01},
+pages = {337-372},
+title = {Introduction to lambda calculus},
+volume = {4},
+journal = {Nieuw archief voor wisenkunde}
+}
+
+@inproceedings{OkasakiGill1998,
+  title={Fast mergeable integer maps},
+  author={Okasaki, Chris and Gill, Andrew},
+  booktitle={Workshop on ML},
+  pages={77--86},
+  year={1998}
+}

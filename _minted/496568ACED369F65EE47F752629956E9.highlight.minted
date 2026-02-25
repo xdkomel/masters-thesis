@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{FunExtractName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{SomeScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{)}
+\end{MintedVerbatim}

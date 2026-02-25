@@ -1,0 +1,12 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{LangProgramStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangProgramStore}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{langAst}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{ast}\PYG{p}{]}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{n}{ast}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Map}\PYG{+w}{ }\PYG{k+kt}{FilePath}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LangProgramStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{p}{)}\PYG{p}{)}
+
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{LangEnv}\PYG{+w}{ }\PYG{n}{ast}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangEnv}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{store}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{TVar}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

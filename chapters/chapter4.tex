@@ -1,0 +1,170 @@
+\chapter{Implementation}
+\label{chap:impl}
+
+\section{LSP Interface}
+
+The Haskell LSP library \footnote{\url{https://github.com/haskell/lsp}} allows to easily run a language server and define its behavior using a list of handlers. 
+A handler is a function acting in response to a request body.
+The library defines a finite amount of events which can be triggered by a notification or manual request, which, in terms of handlers are all, eventually, just events triggering a consequent response function.
+The project uses the following handler-functions:
+
+\begin{itemize}
+\item \texttt{Initialized} is triggered on the language server initialization
+\item \texttt{WorkspaceDidChangeWatchedFiles} is triggered when files that are currently in focus in the editor change
+\item \texttt{TextDocumentDefinition} is triggered when the user requests to navigate to a definition of a given symbol
+\item \texttt{TextDocumentRename} is triggered when the user points at a symbol and wishes to rename it
+\end{itemize}
+
+\subsection{Building a Tree}
+
+The \texttt{LSP.Server.Core} module provides a function fetching the root path of a project.
+Then by using \texttt{globDir} defined in \texttt{System.FilePath.Glob.Directory} module it is possible to filter out files with the extension related to the given language and by using \texttt{FunBuildASTs} produce ASTs for each file.
+
+\section{Caching}
+
+The ASTs produced on initialization are cached for later usage. 
+Every watched files change triggers ASTs rebuild.
+
+The cache is defined as a separate module independent of Free Foil which is deliberately done to foster modular design and future extensibility to adapt caching to more complex scenarios.
+Caching is implemented using Software Transactional Memory (STM) \footnote{\url{https://hackage.haskell.org/package/stm}}.
+The program's environment stores a mutable variable \texttt{LangStore ast} parametrized by the final AST type—\texttt{SomeScopedAST binder sig} in the current implementation.
+\texttt{LangStore} stores a \texttt{Map} connecting \texttt{FilePath}s to \texttt{LangProgramStore}s, each, essentially, storing the list of ASTs:
+
+\begin{minted}[breaklines=true]{haskell}
+newtype LangProgramStore ast = LangProgramStore 
+  { langAst :: [ast] 
+  }
+
+newtype LangStore ast
+  = LangStore (Map FilePath (LangProgramStore ast)) 
+
+newtype LangEnv ast = LangEnv
+  { store :: TVar (LangStore ast)
+  }
+\end{minted}
+
+The caching module implements two functions reading and writing to the environment as well as the \texttt{LSP} parametrizing the \texttt{LspT}.
+
+\begin{minted}[breaklines=true]{haskell}
+type LSP ast = LspT () (ReaderT (LangEnv ast) IO)
+\end{minted}
+
+\section{Connecting Families}
+
+Whether it is finding a symbol's definition or tracing a symbols usage, a \texttt{Family} must be built first, as described in the \ref{section:tracing_a_name}.
+A function dedicated to building a family with respect to a given \texttt{Name} follows:
+
+\begin{minted}[breaklines=true]{haskell}
+nameFamily :: Distinct n
+  => FunExtractName binder sig
+  -> SomeName binder sig 
+  -> Scope n
+  -> TermTelescope binder sig n
+  -> Maybe (Family binder sig)
+\end{minted}
+
+Since \texttt{NodeTerm}s contain a \texttt{CoSinkable binder}, the scope can be dragged all the way through the \texttt{TermTelescope}'s structure until a binder injecting the queried name is found. 
+If the binder is not adding the name, its child carries on the search, and later—siblings.
+Technically, it is simply a Depth First Search (DFS) algorithm.
+Once the parent—a node establishing the given name—is found, scope-management is still required to produce the \texttt{SomeScopedAST} from the \texttt{LeafNode}.
+If the Free Foil AST was built correctly, succeeding \texttt{TermTelescope}s will introduce names distinct from the queried, thus, additional checks on the name-in-scope membership after finding the parent are not required.
+
+\subsection{Names Collisions}
+
+The possibility of multiple alternative scope extensions as discussed in the \ref{section:tracing_a_name} means multiple \texttt{TermTelescope}s can be produced for a single expression. 
+However, it also means the Foil \texttt{NameBinder} operating with an integers set under the hood is going to extend the scope identically for every AST branch.
+As depicted in the example, a Haskell tuple of three lambdas extends the \texttt{Scope n} three times introducing three \texttt{Name}s all parametrized by a different type parameter, while under the hood all three equal to the same integer value, which also means all three integer sets representing \texttt{Scope l1}, \texttt{Scope l2}, and \texttt{Scope l3} are equal.
+
+\begin{minted}[breaklines=true]{haskell}
+myFunction = -- Scope n
+  ( \x -> doSmth1 x -- Scope l1
+  , \y -> doSmth2 y -- Scope l2
+  , \x -> doSmth3 x -- Scope l3
+  )
+\end{minted}
+
+In practice, for the above example the \texttt{nameFamily} is going to falsely pick the first \texttt{NodeTerm} introducing the given \texttt{Name} resulting in 33\% success rate.
+Comparing raw \texttt{String} names injected in each node would still confuse the first and third branches, so it's not a solution either.
+
+The simplest solution is to check whether a given subtree contains the required \texttt{Var}. 
+Since the language server requires all symbols to be locatable to use the \texttt{FunFindNarrowest}, the queried name must be present in the given subtree.
+From the user's perspective, the AST may be traversed several time for each option leading to the $O(n^2)$ algorithm complexity in the worst case scenario.
+Yet if the user's implementation can cut off searches that for sure do not lead to a given position, the algorithm completes in $O(n)$ even in the worst case.
+
+An alternative solution is radical as it implies to adapt the internal Foil machinery to the following case.
+The \texttt{Scope} can possibly exclude some \texttt{Name}s from itself marking them as ``taken''.
+It must not even be an additional integer set but rather an offset representing how much names were scoped in the preceding cases of Free Foil AST creation.
+In a signature with pairs, the modification would mean building the \texttt{Pair} node required converting cases one by one, which makes each case in the node implicitly dependant on the scopes of other alternative cases.
+That makes it impossible to parallelize the conversion of a concrete syntax tree to the abstract representation.
+
+\begin{minted}[breaklines=true]{haskell}
+toAst :: Distinct n
+  => OffsetScope n 
+  -> Map String (Name n) 
+  -> RawTerm 
+  -> (MyAst n, Int)
+toAst scope env = \case
+  ... -- Other AST to Foil AST converting cases
+  RawPair l r -> 
+    let (astL, lShift) = toAst scope env l
+        (astR, rShift) = toAst (shiftScope scope lShift) env r
+    in (Node (Pair astL astR), rShift)
+\end{minted}
+
+This sophisticated scope management can be applied only when building the AST. The \texttt{ShiftScope} assumed to be the default Foil \texttt{Scope} with an additional integer used in the customized version of \texttt{rawFreshName}.
+
+\begin{minted}[breaklines=true]{haskell}
+rawFreshName scope offset = if IntSet.null scope 
+  then offset 
+  else offset + 1 + (IntSet.findMax scope)
+\end{minted}
+
+Hence, if the scope was managed correctly using shifts, the final tree will have no name collisions.
+
+\section{Example Project}
+
+I tested the implementation of the agnostic language server by applying it to two toy programming languages—LambdaPi and FLAN (meaning Functional LANguage).
+Flan was required to test type checking and more complex name tracing algorithms.
+
+\subsection{Grammar and Signature}
+
+Flan is a strictly typed functional programming language with the following signature:
+
+\begin{minted}[breaklines=true]{haskell}
+data FlanType a
+  = IntType a
+  | StrType a
+  | BoolType a
+  | FunType a (FlanType a) (FlanType a) 
+  | PairType a (FlanType a) (FlanType a)
+  | UnknownType a String
+
+data FlanPattern a 
+  = PatternWildcard a
+  | PatternVar a String
+  | PatternPair a (FlanPattern a) (FlanPattern a)
+
+data FlanF a s t 
+  = VarF a t String
+  | AppF a t t
+  | LamF a (FlanPattern a) (PatternType a) s
+  | LetF a (FlanPattern a) (PatternType a) t s
+  | PairF a t t
+  | IfF a t t t
+  | ConstF a FlanConst
+  | ErrorF a String
+\end{minted}
+
+Every expression is parametrized by an annotation. 
+Initially, it only stores raw BNFC location of a given node.
+Later, annotations can be used to match types during type checking.
+
+Instead of the default \texttt{NameBinder}, Flan's AST uses \texttt{NameBinders} as the \texttt{binder}. 
+Free Foil provides a mechanism to bind zero or many names for one node, thus, allowing to bind patterns of any complexity easily. 
+
+\subsection{Visual Studio Code Demo}
+
+I developed a simple VSCode demonstration project to test the compiled language server.
+With some \texttt{ALSConfiguration}, the program can be built as an executable and hosted in a VSC extension.
+
+\ldots

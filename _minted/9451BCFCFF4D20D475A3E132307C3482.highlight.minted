@@ -1,0 +1,14 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{BNFC\PYGZsq{}Position}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{ASTNode}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{ASTNode\PYGZsq{}}\PYG{+w}{ }\PYG{k+kt}{BNFC\PYGZsq{}Position}
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{ASTNode\PYGZsq{}}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{AnASTNode}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{ASTChild\PYGZsq{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{]}
+\PYG{+w}{  }\PYG{k+kr}{deriving}
+\PYG{+w}{    }\PYG{p}{(}\PYG{+w}{ }\PYG{k+kt}{Eq}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Ord}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Show}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Read}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Functor}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Foldable}
+\PYG{+w}{    }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Traversable}
+\PYG{+w}{    }\PYG{p}{)}
+\end{MintedVerbatim}

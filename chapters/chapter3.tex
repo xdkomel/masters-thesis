@@ -1,0 +1,227 @@
+\chapter{Methodology}
+\label{chap:met}
+
+\section{Design Requirements}
+
+The goal of my research is to develop an out-of-box solution for a minimal language server. 
+Given a Foil AST and some required and optional AST-transforming functions, it has to compile into a binary communicating via LSP. 
+I would also like to provide a small example-project demonstrating the integration of such a language server into the Visual Studio Code (VS Code) \footnote{\url{https://code.visualstudio.com/}}, an open-source code editor.
+
+The main criterion is the simplicity for an end user. This also means requiring as less boilerplate code as possible. 
+So that a person wishing to create a proof assistant or a simple programming language for educational or research purposes could have provided the minimal set of functions, while all the heavy-lifting would have lied on the agnostic languages server's shoulders. 
+Specifically, the implementation of LSP methods for symbols definition, renaming, type-checking, and code highlighting. 
+All of the methods above could be implemented by juggling a finite amount of functions traversing the AST.
+
+\subsection{Deprioritized Criteria}
+
+The project does not focus on substituting complex enterprise-level language servers, nor does it provide a "swiss knife" for any level of complexity projects. 
+Hence, the performance and extensibility are deprioritized.
+Though, this doesn't mean the behavior of a resulting language server should be non-customizable and slow. 
+Rather it only implies the performance and extensibility must not come in contradiction with the prioritized criteria.
+
+\section{Language Server Methods Dismantled}
+
+\subsection{Building a Tree}
+
+The first operation required for any language server is to build the AST, since it is essentially what is going to be analyzed throughout the course of a user's session. 
+Given a language's file extension, finding certain files, converting them into ASTs, and even tracking modifications is relatively easy.
+However, parsing the AST must be a user's task since the language server is supposed to know nothing about the syntax of the given language.
+
+Some languages may represent programs as a list of declarations.
+From the scope-tracking view, these are programs where the scopes gets injected manually to an expression according to the whole project's context.
+The program, hence, is defined as a set of expressions—not a nested structure. 
+Scope management in these scenarios becomes more sophisticated compared to the nested one-expression case.
+Yet it's still possible to produce a Free Foil AST leaving a single expression representing a whole program afterwards, turning it into a list of expressions each with a distinct scope is also a solution.
+In terms of an agnostic language server producing a list of trees from a given \texttt{String} input is a cheap yet powerful modification comparing to limiting it to a single element allowing for more user customizations without a requirement to extend the second-order abstract syntax signature. 
+
+The function producing Free Foil ASTs from a given input is defined as the following:
+
+\begin{minted}[breaklines=true]{haskell}
+type FunBuildASTs binder sig 
+  = String 
+  -> [SomeScopedAST binder sig]
+\end{minted}
+
+\texttt{SomeScopedAST} is parametrized by a \texttt{binder} and \texttt{sig} but it also introduces an existential variable \texttt{n} which makes any function referring to the \texttt{SomeScopedAST} independent of the concrete phantom type parameter \texttt{n} while also preserving the relation of the \texttt{AST binder sig n} to the scope \texttt{Scope n}.
+
+\begin{minted}[breaklines=true]{haskell}
+data SomeScopedAST binder sig where
+  SomeScopedAST :: Distinct n 
+    => Scope n 
+    -> AST binder sig n 
+    -> SomeScopedAST binder sig
+\end{minted}
+
+\subsection{Finding a Node}
+
+The first operation required for any language server is to map the location of the user cursor, the line and column numbers, to a node in the AST.
+The BNFC represents the AST nodes as Haskell \texttt{Functor}s parameterized by their location like so:
+
+\begin{minted}[breaklines=true]{haskell}
+type BNFC'Position = Maybe (Int, Int)
+type ASTNode = ASTNode' BNFC'Position
+data ASTNode' a = AnASTNode a [ASTChild' a]
+  deriving 
+    ( Eq
+    , Ord
+    , Show
+    , Read
+    , Functor
+    , Foldable
+    , Traversable
+    )
+\end{minted}
+
+These locations can be stored in the Free Foil AST's signature annotations.
+However, the BNFC does not provide the ending positions for nodes, even for identifiers. 
+So for an end user finding a name means traversing the AST and picking the narrowest child for which the positions range must be somehow computed first.
+The good news is the naïve implementation for a symbol written horizontally having the form of \texttt{((x, y), (x + symbolLength, y))} unlocks functionality enough for a bunch of language server features related to names!
+
+Another struggle imposed by the Free Foil design is the disability to provide an annotation for a \texttt{Var}. 
+Since only \texttt{Node}s are annotated by the signature, one can only have access to the \texttt{Name} represented by a given variable, which is essentially just an integer value. 
+Even though it makes impossible to use Foil \texttt{Var}s for anything but scope tracking, the easiest solution would be to come up with a variable-\texttt{Node} wrapper. 
+It is a user's task to produce concrete syntax and convert it to a Foil AST, hence, the user could've wrapped \texttt{Var}s into specific variable-\texttt{Node}s to make them locatable.
+It is not so much an unsafe decision as it is unreliable for an end user to always believe a random \texttt{Node} might always be a \texttt{Var} in disguise.
+Luckily, it is up to a user to decide how to exactly make the \texttt{Node}s locatable and to pick the proper representation.
+
+The function searching for nodes is defined as:
+
+\begin{minted}[breaklines=true]{haskell}
+type FunFindNarrowest binder sig 
+  = (Int, Int) 
+  -> SomeScopedAST binder sig 
+  -> Maybe (SomeScopedAST binder sig)
+\end{minted}
+
+At the same time an auxiliary function is used to extract a name from any node if the narrowest node happens to be a \texttt{Var} or a Node dedicated to directly wrap a Free Foil variable, thus, making it locatable as discussed earlier:
+
+\begin{minted}[breaklines=true]{haskell}
+type FunExtractName binder sig 
+  = SomeScopedAST binder sig 
+  -> Maybe (SomeName binder sig)
+\end{minted}
+
+\subsection{Tracing a Name}
+\label{section:tracing_a_name}
+
+To find any symbol's definition and its further usages requires traversing the AST and collecting \texttt{Node}s with the consequent binders and, eventually, \texttt{Var}s referring to the queried name.
+The structure storing these relations can have a form:
+
+\begin{minted}[breaklines=true]{haskell}
+data TermTelescope binder sig n where
+  LeafTerm :: Distinct n 
+    => AST binder sig n 
+    -> TermTelescope binder sig n
+  NodeTerm :: (Distinct n, DExt n l, CoSinkable binder) 
+    => AST binder sig n -- The term 
+    -> binder n l -- The term's binder
+    -> [TermTelescope binder sig l] -- Scoped [NodeTerm]s
+    -> TermTelescope binder sig n
+\end{minted}
+
+One \texttt{TermTelescope} matches a single expression containing all nested \texttt{Node}s, extending the scope, and variables, supposedly, as leaves.
+The end user builds a \texttt{TermTelescope} for each expression, and later the structure is traversed to match a specific \texttt{Name}.
+\texttt{TermTelescope}s allow to select only nodes extending the scope and variables, which can be used to find a name's definition or trace its usages generally.
+Thus, one \texttt{TermTelescope} can be used to build a structure focusing on the definition of some name.
+\texttt{Some} data types wrap the scope phantom type parameter to indicate the scope of the resulting expression is of any scope.
+
+\begin{minted}[breaklines=true]{haskell}
+data SomeName binder sig where
+  SomeName :: Distinct n 
+    => Name n 
+    -> SomeName binder sig
+
+data Family binder sig = Family
+  { parent :: SomeScopedAST binder sig
+  , children :: [SomeScopedAST binder sig]
+  , name :: SomeName binder sig
+  }
+\end{minted}
+
+The binder concrete implementation is unknown, in contrast, it is only said to be \texttt{CoSinkable} making it available to extend any scope independent of the language's specification.
+
+In a program one expression can produce multiple branches of scope-extension resulting in a list of \texttt{TermTelescope}s. For instance, if the expression is a pair of lambdas—\texttt{(λ a . a, λ b. b)}—the AST gets divided in two \texttt{TermTelescope}s right away. 
+Thus, a function building \texttt{TermTelescope}s from a single AST may look like:
+
+\begin{minted}[breaklines=true]{haskell}
+type FunBuildTelescopes binder sig 
+  = forall n . Distinct n 
+  => Scope n 
+  -> AST binder sig n 
+  -> [TermTelescope binder sig n]
+\end{minted}
+
+The function introduces an existential phantom type parameter that signifies the \texttt{AST binder sig n} exists in the \texttt{Scope n}.
+Moreover, in the resulting list of \texttt{TermTelescope}s, each shares the same \texttt{Scope n}. 
+It is impossible for a \texttt{TermTelescope} in this scenario to be parametrized by a different scope type parameter as this would have meant another \texttt{NodeTerm} parametrized by a narrower scope with a consequent binder introduced the name.
+Moreover, the function operates with a specific \texttt{Scope} and \texttt{AST} in contrast to passing a \texttt{SomeScopedAST} it resembles so much to explicitly parametrize them with the same type parameter as the resulting \texttt{TermTelescope}s to foster the correct and predictable scope-management.
+
+\subsection{Node Into a Range}
+
+TODO
+
+\subsection{Type Checking}
+
+TODO
+
+\subsection{Code Highlighting}
+
+TODO
+
+\section{Language Server Configuration}
+
+The configuration required to run a language server is defined as:
+
+\begin{minted}[breaklines=true]{haskell}
+data ALSConfiguration binder sig = ALSConfiguration
+  { fileExtension :: String
+  , buildAsts :: FunBuildASTs binder sig
+  , findNarrowest :: FunFindNarrowest binder sig
+  , extractName :: FunExtractName binder sig
+  , buildTelescopes :: FunBuildTelescopes binder sig
+  , findRange :: FunRange binder sig
+  }
+\end{minted}
+
+
+% Referencing other chapters \ref{chap:lr}, \ref{chap:met}, \ref{chap:impl}, \ref{chap:eval} and \ref{chap:conclusion}
+% \begin{longtable}{c|c}
+% \caption[This is the title I want to appear in the List of Tables]{Simulation Parameters} \label{table:thisimulation_params} \\
+% \hline
+% A & B  \\
+% \hline
+% \endfirsthead
+% \multicolumn{2}{@{}l}{} \\
+% \hline
+% A & B \\
+% \hline
+% \endhead
+% \hline
+%  \textbf{Parameter} & \textbf{Value}\\
+%  \hline
+%  Number of vehicles & $|\mathcal{V}|$\\
+%  \hline
+%  Number of RSUs & $|\mathcal{U}|$\\
+%  \hline
+%  RSU coverage radius & 150 m\\
+%  \hline
+%  V2V communication radius & 30 m\\
+%  \hline
+%  Smart vehicle antenna height & 1.5 m\\
+%  \hline
+%  RSU antenna height & 25 m\\
+%  \hline
+%  Smart vehicle maximum speed & $v_{max}$ m/s\\
+%  \hline
+%  Smart vehicle minimum speed & $v_{min}$ m/s\\
+%  \hline
+%  Common smart vehicle cache capacities & $[50, 100, 150, 200, 250]$ mb\\
+%  \hline
+%  Common RSU cache capacities & $[5000,1000,1500,2000,2500]$ mb\\
+%  \hline
+%  Common backhaul rates & $[75, 100, 150]$ mb/s\\
+%  \hline
+% \end{longtable}
+
+
+% \ldots
