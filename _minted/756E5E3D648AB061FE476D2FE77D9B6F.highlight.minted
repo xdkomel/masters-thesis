@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kd}{val}\PYG{+w}{ }\PYG{n+nv}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{k+kd}{fun}\PYG{+w}{ }\PYG{n+nf}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{x}\PYG{p}{:}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{)}\PYG{p}{:}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{n}{a}\PYG{p}{(}\PYG{n}{y}\PYG{p}{)}
+\end{MintedVerbatim}

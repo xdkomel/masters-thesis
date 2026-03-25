@@ -3,8 +3,14 @@
 
 Language servers are an essential component of modern development environments, providing rich code intelligence features such as code completion, navigation, error checking, and refactoring support. 
 The Language Server Protocol (LSP) \cite{lsp}, introduced by Microsoft, has standardized communication between language servers and editors, allowing a common interface for diverse programming environments. 
-There are things all language servers have in common, like storing the current environment configuration, updating it on file changes, renaming, or navigating to a symbol's definition. 
-I tried to automate some of those scenarios or provide a flexible mechanism to adjust the behavior of a language server.
+The implementation of a language server from scratch is connected to a pile of boilerplate code, similar and repetitive algorithms for every feature, which makes the job slow, and more code usually means more bugs that are harder to identify later.
+I wish to make the production of a minimal language server a simpler job by moving as much processing as possible to an agnostic framework which relies on safe and predictable machinery.
+Hereby, I present a Haskell framework that, given a Free-Foil abstract syntax and a set of functions depending on the language-specific signature, produces a language server communicating via LSP able to store the current environment's configuration, update it on files changes, rename symbols, navigate to a symbol's definition, perform type-checking, and present info, diagnostic, and warnings messages.
+
+% Представлен фреймворк на хаскель с ... который поддерживает ...
+% В теле каждому пункту в цели есть свой подраздел про фичу
+% Реализация, тестирование, выводы для каждого пункта
+% Функциональные тесты, что всё работет правильно, применимость к языкам, ограничения
 
 \section{Binding and Scopes}
 \label{sec:bindings-and-scopes}

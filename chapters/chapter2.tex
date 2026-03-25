@@ -124,7 +124,7 @@ substitute :: (Bifunctor sig, Distinct o, CoSinkable binder, SinkableK binder)
     -> AST binder sig o
 \end{minted}
 
-Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
+Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction \cite{freefoil2024}, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
 
 Additionally, Free Foil supports a template-based approach where scope-safe representations can be automatically derived from naïve AST definitions using Template Haskell, allowing seamless integration with parser generators like BNF Converter (BNFC) \cite{ForsbergRanta2004}.
 

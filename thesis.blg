@@ -1,9 +1,17 @@
 [0] Config.pm:308> INFO - This is Biber 2.20
 [0] Config.pm:311> INFO - Logfile is 'thesis.blg'
-[27] biber-darwin:340> INFO - === Wed Feb 25, 2026, 13:05:16
-[34] Biber.pm:420> INFO - Reading 'thesis.bcf'
-[63] Biber.pm:994> INFO - Found 0 citekeys in bib section 0
-[68] bbl.pm:676> INFO - Writing 'thesis.bbl' with encoding 'UTF-8'
-[68] bbl.pm:779> INFO - Output to thesis.bbl
-[68] Biber.pm:131> WARN - The file 'thesis.bcf' does not contain any citations!
-[68] Biber.pm:133> INFO - WARNINGS: 1
+[26] biber-darwin:340> INFO - === Tue Mar 24, 2026, 19:00:44
+[32] Biber.pm:420> INFO - Reading 'thesis.bcf'
+[61] Biber.pm:994> INFO - Found 14 citekeys in bib section 0
+[66] Biber.pm:4463> INFO - Processing section 0
+[70] Biber.pm:4654> INFO - Looking for bibtex file 'ref.bib' for section 0
+[71] bibtex.pm:1713> INFO - LaTeX decoding ...
+[77] bibtex.pm:1519> INFO - Found BibTeX data source 'ref.bib'
+[118] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[118] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[118] Biber.pm:4283> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'en-US'
+[118] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[123] bbl.pm:676> INFO - Writing 'thesis.bbl' with encoding 'UTF-8'
+[125] bbl.pm:779> INFO - Output to thesis.bbl
+[125] Biber.pm:131> WARN - legacy month field 'July' in entry 'haskellCompilerSecrets' is not an integer - this will probably not sort properly.
+[125] Biber.pm:133> INFO - WARNINGS: 1

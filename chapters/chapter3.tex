@@ -4,7 +4,7 @@
 \section{Design Requirements}
 
 The goal of my research is to develop an out-of-box solution for a minimal language server. 
-Given a Foil AST and some required and optional AST-transforming functions, it has to compile into a binary communicating via LSP. 
+Given a Foil AST and some signature-dependant functions, it has to compile into a binary communicating via LSP. 
 I would also like to provide a small example-project demonstrating the integration of such a language server into the Visual Studio Code (VS Code) \footnote{\url{https://code.visualstudio.com/}}, an open-source code editor.
 
 The main criterion is the simplicity for an end user. This also means requiring as less boilerplate code as possible. 
@@ -19,7 +19,32 @@ Hence, the performance and extensibility are deprioritized.
 Though, this doesn't mean the behavior of a resulting language server should be non-customizable and slow. 
 Rather it only implies the performance and extensibility must not come in contradiction with the prioritized criteria.
 
-\section{Language Server Methods Dismantled}
+\subsection{Evaluation Criteria}
+\label{subsec:evaluation_criteria}
+
+To assess whether the proposed language server framework meets its design goals, the following criteria will be used:
+
+\begin{enumerate}
+  \item \textbf{Integration Simplicity}: The number of functions an end user must implement to create a working language server. 
+  A successful implementation should require no more than six core functions (as defined in \texttt{ALSConfiguration}) with minimal boilerplate code.
+  
+  \item \textbf{Feature Completeness}: The framework must support essential LSP features including \textit{go-to-definition}, \textit{find-references}, \textit{rename-symbol}, \textit{hover}, and \textit{syntax highlighting}. 
+  Each feature should function correctly when the corresponding user-provided functions are implemented.
+  
+  \item \textbf{Correctness}: Symbol resolution must accurately trace variable definitions to their usages within the correct scope. 
+  The \texttt{TermTelescope} structure should correctly represent scope extensions and variable bindings without false positives or negatives.
+  
+  \item \textbf{Language Agnosticism}: The framework should work with at least two distinct language implementations without modification to the core server logic. 
+  This demonstrates the \texttt{binder} and \texttt{sig} parameterization achieves true abstraction.
+  
+  \item \textbf{Response Time}: While performance is deprioritized, LSP requests should complete within 500ms for typical source files (~1000 lines) to maintain acceptable user experience in VS Code.
+  
+  \item \textbf{VS Code Integration}: The example project must demonstrate successful integration with Visual Studio Code, with all supported LSP features accessible through the editor's standard interface.
+\end{enumerate}
+
+These criteria will be evaluated through the implementation of the example project mentioned in Section~\ref{chap:met}, as well as through unit tests for core functionality such as scope tracking and name resolution.
+
+\section{Language Server Methods}
 
 \subsection{Building a Tree}
 

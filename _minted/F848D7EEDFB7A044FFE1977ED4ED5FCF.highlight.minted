@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{ExprF}\PYG{+w}{ }\PYG{n}{scope}\PYG{+w}{ }\PYG{n}{term}
+\PYG{+w}{    }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{term}\PYG{+w}{ }\PYG{n}{term}
+\PYG{+w}{    }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{LamF}\PYG{+w}{ }\PYG{n}{scope}
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{Expr}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{k+kt}{NameBinder}\PYG{+w}{ }\PYG{k+kt}{ExprF}
+\end{MintedVerbatim}

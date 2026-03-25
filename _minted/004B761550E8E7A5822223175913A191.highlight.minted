@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{Substitution}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{e}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{S}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Type}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{S}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{o}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{S}\PYG{p}{)}
+\PYG{+w}{    }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{UnsafeSubstitution}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{IntMap}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{e}\PYG{+w}{ }\PYG{n}{o}\PYG{p}{)}\PYG{p}{)}
+\PYG{n+nf}{substitute}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Bifunctor}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{o}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{CoSinkable}\PYG{+w}{ }\PYG{n}{binder}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{SinkableK}\PYG{+w}{ }\PYG{n}{binder}\PYG{p}{)}
+\PYG{+w}{    }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Scope}\PYG{+w}{ }\PYG{n}{o}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Substitution}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{n}{o}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{i}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{o}
+\end{MintedVerbatim}

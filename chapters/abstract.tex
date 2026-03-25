@@ -1,5 +1,10 @@
 \begin{abstract}
-% skip one line to make the abstract start with indent
 
-My abstract starts from here.
+A language server is a crucial component of a modern development environment. 
+In this work I propose a framework for implementing a language server with minimal effort, minimizing code duplication. 
+The implementation relies heavily on Free-Foil, a library that uses Haskell's advanced type system to represent abstract syntax. 
+Free-Foil separates names and their occurrences from the language-specific signature, making most algorithms agnostic—independent of the target language. 
+The resulting language server stores the development environment's configuration, updates it on files changes, shows names' definitions, renames symbols, highlights syntax, performs type-checking, and displays diagnostic errors, warnings, and hover messages.
+It is possible to launch it in any development environment communicating via the Language Server Protocol.
+
 \end{abstract}

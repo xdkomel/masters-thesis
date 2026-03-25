@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.10)  25 FEB 2026 13:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.10)  24 MAR 2026 19:00
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -2056,7 +2056,7 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
- (./thesis.aux (./chapters/chapter3.aux) (./chapters/chapter4.aux))
+ (./thesis.aux (./chapters/abstract.aux) (./chapters/chapter1.aux) (./chapters/chapter2.aux) (./chapters/chapter3.aux) (./chapters/chapter4.aux))
 \openout1 = `thesis.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 132.
@@ -2165,9 +2165,20 @@ Package hyperref Info: Link coloring ON on input line 132.
 \openout5 = `thesis.out'.
 
 \c@lstlisting=\count525
-\openout2 = `chapters/chapter3.aux'.
+\openout2 = `chapters/abstract.aux'.
 
- (./chapters/chapter3.tex
+ (./chapters/abstract.tex
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
+(Font)              scaled to size 14.4pt on input line 1.
+
+
+[1
+
+
+{/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/tempora/t2a-tempora.enc}])
+\openout2 = `chapters/chapter1.aux'.
+
+ (./chapters/chapter1.tex
 Chapter 1.
 LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
 (Font)              scaled to size 29.86pt on input line 1.
@@ -2176,90 +2187,155 @@ LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
 LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
 (Font)              scaled to size 35.83pt on input line 1.
 LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
-(Font)              scaled to size 20.74pt on input line 4.
+(Font)              scaled to size 20.74pt on input line 15.
 LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
-(Font)              scaled to size 20.74pt on input line 4.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
-(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
- (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
-(Font)              scaled to size 14.4pt on input line 8.
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 8.
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
-(Font)              scaled to size 7.0pt on input line 8.
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 8.
- (/usr/local/texlive/2025/texmf-dist/tex/latex/base/ulasy.fd
-File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 8.
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
-(Font)              scaled to size 5.0pt on input line 8.
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 8.
-LaTeX Font Info:    Trying to load font information for T2A+pcr on input line 8.
-LaTeX Font Info:    No file T2Apcr.fd. on input line 8.
+(Font)              scaled to size 20.74pt on input line 15.
+\pydata@fh@_2EF71E68B4AD97F630480BCEBC1842FB.data.minted=\write6
+\openout6 = `_2EF71E68B4AD97F630480BCEBC1842FB.data.minted'.
+
+runsystem(latexminted config  --timestamp 20260324190046 2EF71E68B4AD97F630480BCEBC1842FB)...executed.
+
+(./_2EF71E68B4AD97F630480BCEBC1842FB.config.minted)
+runsystem(latexminted cleanconfig  --timestamp 20260324190046 2EF71E68B4AD97F630480BCEBC1842FB)...executed.
+
+ (./_minted/bw.style.minted) (./_minted/5181F4CB3A7903FED9E6271F99301CBA.highlight.minted
+LaTeX Font Info:    Trying to load font information for T2A+txtt on input line 3.
+LaTeX Font Info:    No file T2Atxtt.fd. on input line 3.
 
 
-LaTeX Font Warning: Font shape `T2A/pcr/m/n' undefined
-(Font)              using `T2A/cmr/m/n' instead on input line 8.
+LaTeX Font Warning: Font shape `T2A/txtt/m/n' undefined
+(Font)              using `T2A/cmr/m/n' instead on input line 3.
 
-
+) (./_minted/FB67E54F8D9F20DC9D66803707D7B7C3.highlight.minted) (./_minted/BBE5470B13A66533A2C11482ACF16C25.highlight.minted) (./_minted/11C751082A1E44F7F932EB8BD4251162.highlight.minted) (./_minted/5181F4CB3A7903FED9E6271F99301CBA.highlight.minted) (./_minted/FB67E54F8D9F20DC9D66803707D7B7C3.highlight.minted)
 
 [7
 
 
 
-{/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/tempora/t2a-tempora.enc}{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
-(Font)              scaled to size 17.28pt on input line 15.
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
-(Font)              scaled to size 17.28pt on input line 15.
 
-
-LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
-(Font)              scaled to size 14.4pt on input line 36.
-[8]
-\pydata@fh@_2EF71E68B4AD97F630480BCEBC1842FB.data.minted=\write6
-\openout6 = `_2EF71E68B4AD97F630480BCEBC1842FB.data.minted'.
-
-runsystem(latexminted config  --timestamp 20260225130518 2EF71E68B4AD97F630480BCEBC1842FB)...executed.
-
- (./_2EF71E68B4AD97F630480BCEBC1842FB.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20260225130518 2EF71E68B4AD97F630480BCEBC1842FB)...executed.
-
- (./_minted/bw.style.minted) (./_minted/47AC11484F6EA3AE4CC911A7ED04A789.highlight.minted
-LaTeX Font Info:    Trying to load font information for T2A+txtt on input line 1.
-LaTeX Font Info:    No file T2Atxtt.fd. on input line 1.
-
-
-LaTeX Font Warning: Font shape `T2A/txtt/m/n' undefined
-(Font)              using `T2A/cmr/m/n' instead on input line 1.
-
+] (./_minted/756E5E3D648AB061FE476D2FE77D9B6F.highlight.minted
 
 LaTeX Font Warning: Font shape `T2A/txtt/b/n' undefined
 (Font)              using `T2A/txtt/m/n' instead on input line 2.
 
-) (./_minted/8F2AF3970A4BFBBA14008E2BEDAFF81F.highlight.minted)
+))
 
-[9] (./_minted/9451BCFCFF4D20D475A3E132307C3482.highlight.minted
-LaTeX Font Info:    Trying to load font information for TS1+txtt on input line 2.
+[8{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
+\openout2 = `chapters/chapter2.aux'.
+
+ (./chapters/chapter2.tex
+Chapter 2.
+LaTeX Font Info:    Trying to load font information for T2A+pcr on input line 8.
+LaTeX Font Info:    No file T2Apcr.fd. on input line 8.
+
+LaTeX Font Warning: Font shape `T2A/pcr/m/n' undefined
+(Font)              using `T2A/cmr/m/n' instead on input line 8.
+
+LaTeX Font Info:    Trying to load font information for LGR+pcr on input line 8.
+LaTeX Font Info:    No file LGRpcr.fd. on input line 8.
+
+LaTeX Font Warning: Font shape `LGR/pcr/m/n' undefined
+(Font)              using `LGR/cmr/m/n' instead on input line 8.
+
+
+
+[9
+
+
+
+
+]
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
+(Font)              scaled to size 17.28pt on input line 15.
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/b/n' will be
+(Font)              scaled to size 17.28pt on input line 15.
+ (./_minted/D8D1881DFDEE68E01A93007C31F34643.highlight.minted)
+
+[10]
+LaTeX Font Info:    Trying to load font information for U+msa on input line 28.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 28.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
+(Font)              scaled to size 14.4pt on input line 28.
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
+(Font)              scaled to size 10.0pt on input line 28.
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
+(Font)              scaled to size 7.0pt on input line 28.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 28.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
+(Font)              scaled to size 10.0pt on input line 28.
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/it' will be
+(Font)              scaled to size 5.0pt on input line 28.
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 28.
+ (./_minted/D28D12F1D899C31783506B89928393DD.highlight.minted) (./_minted/6D5083322CA4B7BAA1796897D7EA0BD2.highlight.minted)
+LaTeX Font Info:    Trying to load font information for TS1+Tempora-TLF on input line 40.
+ (/usr/local/texlive/2025/texmf-dist/tex/latex/tempora/TS1Tempora-TLF.fd
+File: TS1Tempora-TLF.fd 2016/02/02 (autoinst) Font definitions for TS1/Tempora-TLF.
+)
+LaTeX Font Info:    Font shape `TS1/Tempora-TLF/m/n' will be
+(Font)              scaled to size 14.4pt on input line 40.
+ (./_minted/AE9B207243E1124FD0A9B977F0AF78FA.highlight.minted) (./_minted/969E8962BBFACC7D0961F56B656D2792.highlight.minted) (./_minted/60CE34D21445F05DA508AED2B51D4786.highlight.minted) (./_minted/47E774868F727EA687B2A9D0DA28E813.highlight.minted) (./_minted/B3A8EF7A11E16D7D0E268EE609ED629A.highlight.minted) (./_minted/35756981A55D0501DCB23A5EE3081683.highlight.minted) (./_minted/B463B70DB4D0E749DCABB687B6663B09.highlight.minted) (./_minted/8CDC1B84D062ACA5EBFF597B5D4871D0.highlight.minted) (./_minted/0F741A1662F350D92E24BA64D73F6D0F.highlight.minted) (./_minted/830139994130E8DBBC6F176E8A2DD0C6.highlight.minted
+LaTeX Font Info:    Trying to load font information for TS1+txtt on input line 3.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/txfonts/ts1txtt.fd
 File: ts1txtt.fd 2000/12/15 v3.1
-)
+))
+Overfull \hbox (7.85483pt too wide) in paragraph at lines 46--47
+[]\T2A/Tempora-TLF/m/n/14.4 if [] and [], then []. 
+ []
+
+(./_minted/4B5FC3FEB0E42D63D12FD0DA4B5BB687.highlight.minted) (./_minted/969E8962BBFACC7D0961F56B656D2792.highlight.minted) (./_minted/756D4457A712C9AFE58207252D39E2AA.highlight.minted) (./_minted/F25FB854C35A805BE61ACB475A28103D.highlight.minted) (./_minted/F44727C8B50CA13947B01C24EF516B5B.highlight.minted) (./_minted/6D5083322CA4B7BAA1796897D7EA0BD2.highlight.minted) (./_minted/1F4608F9033ECDC7D21C05A0993F86D6.highlight.minted
+
+[11{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/tempora/tmp_ac5xuc.enc}]) (./_minted/1E2C5825DDA9FFE8C93125D5E8672056.highlight.minted) (./_minted/ABFD7A48BEC1BEE094875BCC61E266EC.highlight.minted) (./_minted/47E774868F727EA687B2A9D0DA28E813.highlight.minted) (./_minted/756D4457A712C9AFE58207252D39E2AA.highlight.minted) (./_minted/F25FB854C35A805BE61ACB475A28103D.highlight.minted)
+
+[12] (./_minted/DA955C334DF3CC263A424993B8BD842E.highlight.minted) (./_minted/F0E3BC97499FB8E5CBD274062AA735C1.highlight.minted
+
+[13]) (./_minted/F848D7EEDFB7A044FFE1977ED4ED5FCF.highlight.minted) (./_minted/004B761550E8E7A5822223175913A191.highlight.minted
+
+[14])
+
+[15]
+
+[16]
+
+[17]
+
+[18])
+
+[19]
+\openout2 = `chapters/chapter3.aux'.
+
+ (./chapters/chapter3.tex
+Chapter 3.
+
+
+[20
+
+
+
+
+]
+
+[21]
+
+[22] (./_minted/47AC11484F6EA3AE4CC911A7ED04A789.highlight.minted) (./_minted/8F2AF3970A4BFBBA14008E2BEDAFF81F.highlight.minted
+
+[23]) (./_minted/9451BCFCFF4D20D475A3E132307C3482.highlight.minted
 LaTeX Font Info:    Font shape `TS1/txtt/b/n' in size <14.4> not available
 (Font)              Font shape `TS1/txtt/bx/n' tried instead on input line 2.
 )
 
-[10] (./_minted/DAE46045281E1361C6E66CDA3B2DC915.highlight.minted) (./_minted/496568ACED369F65EE47F752629956E9.highlight.minted) (./_minted/060FF7F06193CEE7DF6752F3515B7956.highlight.minted
+[24] (./_minted/DAE46045281E1361C6E66CDA3B2DC915.highlight.minted) (./_minted/496568ACED369F65EE47F752629956E9.highlight.minted)
 
-[11]
+[25] (./_minted/060FF7F06193CEE7DF6752F3515B7956.highlight.minted
 
 LaTeX Font Warning: Font shape `T2A/txtt/m/it' undefined
 (Font)              using `T2A/txtt/m/n' instead on input line 7.
@@ -2268,54 +2344,50 @@ LaTeX Font Info:    Font shape `TS1/txtt/m/it' in size <14.4> not available
 (Font)              Font shape `TS1/txtt/m/sl' tried instead on input line 8.
 ) (./_minted/FD0B8F7C09690ABE91FA03EE150120B8.highlight.minted
 
-[12{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/base/8r.enc}])
-LaTeX Font Info:    Trying to load font information for LGR+pcr on input line 143.
-LaTeX Font Info:    No file LGRpcr.fd. on input line 143.
+[26{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/base/8r.enc}]) (./_minted/FAF1BF58E73042528231DABE277DED7B.highlight.minted)
 
+[27] (./_minted/A0A32D467F1B8B4B872D58529D285C35.highlight.minted
 
-LaTeX Font Warning: Font shape `LGR/pcr/m/n' undefined
-(Font)              using `LGR/cmr/m/n' instead on input line 143.
+[28]))
 
-(./_minted/FAF1BF58E73042528231DABE277DED7B.highlight.minted)
-
-[13] (./_minted/A0A32D467F1B8B4B872D58529D285C35.highlight.minted))
-
-[14]
+[29]
 \openout2 = `chapters/chapter4.aux'.
 
  (./chapters/chapter4.tex
-Chapter 2.
-LaTeX Font Info:    Trying to load font information for TS1+Tempora-TLF on input line 12.
-(/usr/local/texlive/2025/texmf-dist/tex/latex/tempora/TS1Tempora-TLF.fd
-File: TS1Tempora-TLF.fd 2016/02/02 (autoinst) Font definitions for TS1/Tempora-TLF.
-)
-LaTeX Font Info:    Font shape `TS1/Tempora-TLF/m/n' will be
-(Font)              scaled to size 14.4pt on input line 12.
+Chapter 4.
 
 
-[15
+[30
 
 
 
 
-{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/tempora/tmp_ac5xuc.enc}] (./_minted/79F8EC1936712366E2AB9D09917BAC42.highlight.minted
+] (./_minted/79F8EC1936712366E2AB9D09917BAC42.highlight.minted
 
-[16]) (./_minted/940DE704A389884C4487674304005205.highlight.minted) (./_minted/EAA5050C8843892DC77AB3AE64FCBA00.highlight.minted)
+[31]) (./_minted/940DE704A389884C4487674304005205.highlight.minted) (./_minted/EAA5050C8843892DC77AB3AE64FCBA00.highlight.minted)
 
-[17] (./_minted/91C9F13617FB2B2EF428F8C24B6F2338.highlight.minted)
+[32] (./_minted/91C9F13617FB2B2EF428F8C24B6F2338.highlight.minted)
 
-[18] (./_minted/3E1AB1C2A225EF973F5697378BF3CFBD.highlight.minted
+[33] (./_minted/3E1AB1C2A225EF973F5697378BF3CFBD.highlight.minted
 
-[19]) (./_minted/ABA8072C7BD469D04BA31BB128E47DC5.highlight.minted) (./_minted/3A3990BC057998D593B7C8B19E0CFACE.highlight.minted
+[34]) (./_minted/ABA8072C7BD469D04BA31BB128E47DC5.highlight.minted) (./_minted/3A3990BC057998D593B7C8B19E0CFACE.highlight.minted
 
-[20])
+[35])
 
-[21])
+[36])
 
-[22]
+[37]
+LaTeX Font Info:    Font shape `T2A/Tempora-TLF/m/n' will be
+(Font)              scaled to size 35.83pt on input line 162.
 
-LaTeX Warning: Empty bibliography on input line 162.
 
+[38
+
+
+
+]
+
+[39]
 
 Package caption Warning: Unused \captionsetup[table] on input line 93.
 See the caption package documentation for explanation.
@@ -2324,7 +2396,9 @@ See the caption package documentation for explanation.
 Package caption Warning: Unused \captionsetup[figure] on input line 96.
 See the caption package documentation for explanation.
 
-(./thesis.aux (./chapters/chapter3.aux) (./chapters/chapter4.aux))
+
+
+[40] (./thesis.aux (./chapters/abstract.aux) (./chapters/chapter1.aux) (./chapters/chapter2.aux) (./chapters/chapter3.aux) (./chapters/chapter4.aux))
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -2334,24 +2408,24 @@ L3 programming layer <2025-01-18>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: E9DEE992914F76AECC90114FA8CC8E7F;2973.
+(rerunfilecheck)             Checksum: 4B9F8615C423E62DAF77B657175D120D;4961.
 Package logreq Info: Writing requests to 'thesis.run.xml'.
 \openout1 = `thesis.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 33579 strings out of 473190
- 628579 string characters out of 5715799
- 1536967 words of memory out of 5000000
- 56222 multiletter control sequences out of 15000+600000
- 606972 words of font info for 100 fonts, out of 8000000 for 9000
+ 34247 strings out of 473190
+ 650600 string characters out of 5715799
+ 1549885 words of memory out of 5000000
+ 56697 multiletter control sequences out of 15000+600000
+ 609419 words of font info for 102 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 85i,11n,117p,739b,1819s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Bold.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Italic.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Regular.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cbfonts/grmn1440.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/txfonts/tcxbtt.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
-Output written on thesis.pdf (16 pages, 163196 bytes).
+ 85i,12n,117p,1362b,1825s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Bold.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Italic.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/tempora/Tempora-Regular.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cbfonts/grmn1440.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/txfonts/tcxbtt.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/txfonts/tcxtt.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+Output written on thesis.pdf (35 pages, 218932 bytes).
 PDF statistics:
- 235 PDF objects out of 1000 (max. 8388607)
- 194 compressed objects within 2 object streams
- 40 named destinations out of 1000 (max. 500000)
- 161 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 496 PDF objects out of 1000 (max. 8388607)
+ 431 compressed objects within 5 object streams
+ 111 named destinations out of 1000 (max. 500000)
+ 281 words of extra memory for PDF output out of 10000 (max. 10000000)
 
