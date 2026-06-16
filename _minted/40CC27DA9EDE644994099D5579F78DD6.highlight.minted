@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}
+\PYG{+w}{  }\PYG{n}{xOf}\PYG{+w}{   }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} :: Type \PYGZhy{}\PYGZgt{} (AST ..., Type)}
+\PYG{+w}{  }\PYG{n}{yOf}\PYG{+w}{   }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} :: Type \PYGZhy{}\PYGZgt{} (AST ..., Type)}
+\end{MintedVerbatim}

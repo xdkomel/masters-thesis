@@ -1,0 +1,10 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{TokenizableSig}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{tokenize}
+\PYG{+w}{    }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{k+kt}{ScopedASTTokens}\PYG{+w}{ }\PYG{k+kt}{ASTTokens}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{SemanticTokenAbsolute}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{tokenize}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{const}\PYG{+w}{ }\PYG{k+kt}{[]}
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{TokenizablePat}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{tokenizePat}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{SemanticTokenAbsolute}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{tokenizePat}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{const}\PYG{+w}{ }\PYG{k+kt}{[]}
+\end{MintedVerbatim}

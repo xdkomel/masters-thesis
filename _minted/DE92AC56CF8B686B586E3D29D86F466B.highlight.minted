@@ -1,0 +1,4 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{NodeAnn}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{NodeAnn}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{))}\PYG{+w}{ }\PYG{k+kt}{FlanType\PYGZsq{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{String}\PYG{p}{]}
+\end{MintedVerbatim}

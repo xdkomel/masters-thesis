@@ -1,0 +1,4 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{ASTTokens}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{SemanticTokenAbsolute}\PYG{p}{]}
+\PYG{k+kr}{type}\PYG{+w}{ }\PYG{k+kt}{ScopedASTTokens}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ASTTokens}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{ASTTokens}\PYG{p}{)}
+\end{MintedVerbatim}

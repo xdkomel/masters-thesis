@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{TypeDeductiveSig}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{deduceType}
+\PYG{+w}{    }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{ty}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{ty}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ty}\PYG{p}{))}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{ty}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ty}\PYG{p}{))}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig\PYGZsq{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}
+\end{MintedVerbatim}

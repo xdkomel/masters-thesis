@@ -1,0 +1,11 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{S}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{S}\PYG{p}{)}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{k+kt}{PatternWildcard}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ty}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{k+kt}{PatternVar}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{String}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{NameBinder}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}
+\PYG{+w}{  }\PYG{k+kt}{PatternPair}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{PatternPairAnn}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ty}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{i}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{n}{l}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{FlanPattern}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{ty}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}
+\end{MintedVerbatim}

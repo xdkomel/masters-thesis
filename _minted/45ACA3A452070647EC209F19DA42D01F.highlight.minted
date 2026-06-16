@@ -1,0 +1,10 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{xOf}\PYG{+w}{ }\PYG{n}{yOf}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}
+\PYG{+w}{  }\PYG{k+kr}{let}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{y}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{yTy}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{yOf}\PYG{+w}{ }\PYG{n}{anyTypeEmp}
+\PYG{+w}{      }\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{xTy}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{xOf}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{FunType}\PYG{+w}{ }\PYG{n}{funTypeAnnEmp}\PYG{+w}{ }\PYG{n}{yTy}\PYG{+w}{ }\PYG{n}{exTy}\PYG{p}{)}
+\PYG{+w}{      }\PYG{n}{xReturnTy}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kr}{case}\PYG{+w}{ }\PYG{n}{xTy}\PYG{+w}{ }\PYG{k+kr}{of}
+\PYG{+w}{        }\PYG{k+kt}{FunType}\PYG{+w}{ }\PYG{k+kr}{\PYGZus{}}\PYG{+w}{ }\PYG{k+kr}{\PYGZus{}}\PYG{+w}{ }\PYG{n}{r}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}
+\PYG{+w}{        }\PYG{k+kr}{\PYGZus{}}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{anyTypeEmp}
+\PYG{+w}{      }\PYG{p}{(}\PYG{n}{t}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{errs}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{resolveType}\PYG{+w}{ }\PYG{n}{exTy}\PYG{+w}{ }\PYG{n}{xReturnTy}
+\PYG{+w}{  }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{NodeAnn}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{errs}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{n}{y}
+\end{MintedVerbatim}

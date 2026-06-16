@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{runFlanLS}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{IO}\PYG{+w}{ }\PYG{n+nb}{()}
+\PYG{n+nf}{runFlanLS}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{runLanguageServer}\PYG{+w}{ }\PYG{k+kt}{LSConfiguration}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{fileExtension}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}flan\PYGZdq{}}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buildAsts}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{buildAsts\PYGZsq{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

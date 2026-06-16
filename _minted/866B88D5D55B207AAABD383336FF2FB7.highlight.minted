@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{findDefinition}\PYG{+w}{ }\PYG{n}{isValid}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{scope}\PYG{+w}{ }\PYG{n}{ast}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{p}{`}\PYG{n}{member}\PYG{p}{`}\PYG{+w}{ }\PYG{n}{scope}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{Nothing}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{otherwise}\PYG{+w}{ }\PYG{o+ow}{=}
+\PYG{+w}{      }\PYG{n}{findDefinition\PYGZsq{}}\PYG{+w}{ }\PYG{n}{isValid}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{SomeName}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{scope}\PYG{+w}{ }\PYG{n}{ast}
+\end{MintedVerbatim}

@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{FoldablePat}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{foldrPat}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{SomePattern}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}
+\PYG{+w}{  }\PYG{n}{rangePat}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{k+kt}{Range}
+\PYG{+w}{  }\PYG{n}{binderOf}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{NameBinder}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{p}{)}
+\end{MintedVerbatim}

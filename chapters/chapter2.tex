@@ -12,15 +12,17 @@ The simplest approach, often called "naïve substitution," \cite{bound} uses exp
 
 Higher-Order Abstract Syntax (HOAS) \cite{HOAS} leverages the host language's binding mechanisms, providing excellent safety but often at the cost of expressiveness when implementing algorithms that need to inspect or transform bound variables. The "rapier" technique used in the Glasgow Haskell Compiler \cite{haskellCompilerSecrets} offers better efficiency by maintaining a stateless local scope and performing capture-avoiding substitution in one pass. However, as noted by Maclaurin et al. \cite{foil2023}, it lacks type safety, making it easy to forget scope extensions or necessary renamings when implementing complex language features.
 
+A separate family, the nominal techniques, treats names themselves as the primitive notion. Building on the nominal sets of Gabbay and Pitts \cite{nominalSets2002}, systems such as FreshML \cite{freshML2003} and Nominal Isabelle \cite{nominalIsabelle2008} provide first-class support for binding, fresh-name generation, and reasoning modulo $\alpha$-equivalence, mainly in functional programming and proof-assistant settings. They offer strong meta-theoretic guarantees but enforce freshness dynamically or through dedicated logical infrastructure rather than through the host language's type system, as the intrinsically typed representations below do.
+
 \subsection{Intrinsic Scoping}
 
 Intrinsic scoping addresses the safety issues of previous approaches by encoding scope information directly in types. With this technique, the type system ensures that all terms are well-scoped by construction, making ill-scoped terms impossible to express. Bird and Paterson's approach \cite{BirdPaterson1999} uses nested data types to represent De Bruijn indices at the type level. For Haskell:
 
 \begin{minted}[breaklines=true]{haskell}
 data Exp a
-    = Var a
-    | App (Exp a) (Exp a)
-    | Lam (Exp (Maybe a))
+  = Var a
+  | App (Exp a) (Exp a)
+  | Lam (Exp (Maybe a))
 \end{minted}
 
 Here, the type parameter changes when going under a binder (using \texttt{Maybe}), enforcing proper scope extension. While this guarantees safety, it still requires traversing and updating all variables during substitution, impacting efficiency. Additionally, the deep polymorphic recursion consumes significant memory and complicates implementing algorithms that work under binders.
@@ -42,26 +44,28 @@ So every entity in the Foil's representation is scope-indexed by a kind \haskell
     \item \haskell{newtype Scope (n :: S)} is the type of a scope that contains exactly names of type \haskell{Name n}.
     Similarly to the rapier, it stores an integer map \cite{OkasakiGill1998} to lookup and extend the scope.
     \begin{itemize}
-        \item if \haskell{scope1 :: Scope n} and \haskell{scope2 :: Scope n}, then \haskell{scope1 == scope2}
-        \item if \haskell{scope :: Scope n} and \haskell{x : Name n}, then \haskell{x `member` scope == True}.
+        \item if \haskell{scope1 :: Scope n} and \haskell{scope2 :: Scope n},\\
+        then \haskell{scope1 == scope2}
+        \item if \haskell{scope :: Scope n} and \haskell{x : Name n},\\
+        then \haskell{x `member` scope == True}.
     \end{itemize}
 
     \item \haskell{newtype NameBinder (n :: S) (l :: S)} is the type of a binder that introduces a single new name. It extends the scope indexed by \haskell{n} into the scope indexed by \haskell{l} with the name contained in it.
     New instances of \haskell{NameBinder n l} can only be created with a \haskell{withFresh} function, which introduces new instances of \haskell{S}-indexed types with rank-2 polymorphism:
     \begin{minted}[breaklines=true]{haskell}
 withFresh :: Distinct n 
-    => Scope n
-    -> (forall l. (Distinct l, Ext n l) => NameBinder n l -> r) 
-    -> r
+  => Scope n
+  -> (forall l. (Distinct l, Ext n l) => NameBinder n l -> r) 
+  -> r
     \end{minted}
 \end{itemize}
 
 With these data types, a simply-typed lambda calculus can be represented as the following:
 \begin{minted}[breaklines=true]{haskell}
 data Expr n where
-    Var :: Name n -> Expr n
-    App :: Expr n -> Expr n -> Expr n
-    Lam :: NameBinder n l -> Expr l -> Expr n
+  Var :: Name n -> Expr n
+  App :: Expr n -> Expr n -> Expr n
+  Lam :: NameBinder n l -> Expr l -> Expr n
 \end{minted}
 
 Here, every expression is indexed with a scope \haskell{s}, as well as variables, which are represented as \haskell{Name n}. It is noteworthy that the body of the lambda expression is indexed with a different scope \haskell{l}, which is exactly the scope \haskell{NameBinder n l} creates. Thus, when going under a binder, the type of the sub-expression changes, imposing a type-level constraint on all the terms within it.
@@ -92,12 +96,12 @@ The core idea is to parameterize abstract syntax additionally by a bifunctorial 
 
 \begin{minted}[breaklines=true]{haskell}
 data ScopedAST binder sig n where
-    ScopedAST :: binder n l -> AST binder sig l -> ScopedAST binder sig n
+  ScopedAST :: binder n l -> AST binder sig l -> ScopedAST binder sig n
 data AST binder sig n where
-    Var :: Foil.Name n -> AST binder sig n
-    Node 
-        :: sig (ScopedAST binder sig n) (AST binder sig n) 
-        -> AST binder sig n
+  Var :: Name n -> AST binder sig n
+  Node 
+      :: sig (ScopedAST binder sig n) (AST binder sig n) 
+      -> AST binder sig n
 \end{minted}
 
 Given a bifunctorial signature \texttt{sig}, the \texttt{AST} data type automatically generates the complete syntax with proper scoping. 
@@ -105,8 +109,8 @@ For simply-typed lambda calculus:
 
 \begin{minted}[breaklines=true]{haskell}
 data ExprF scope term
-    = AppF term term
-    | LamF scope
+  = AppF term term
+  | LamF scope
 type Expr = AST NameBinder ExprF
 \end{minted}
 
@@ -116,160 +120,181 @@ The key innovation is that Free Foil inherits the Foil's efficient substitution 
 
 \begin{minted}[breaklines=true]{haskell}
 newtype Substitution (e :: S -> Type) (i :: S) (o :: S) 
-    = UnsafeSubstitution (IntMap (e o))
+  = UnsafeSubstitution (IntMap (e o))
 substitute :: (Bifunctor sig, Distinct o, CoSinkable binder, SinkableK binder) 
-    => Scope o 
-    -> Substitution (AST binder sig) i o 
-    -> AST binder sig i 
-    -> AST binder sig o
+  => Scope o 
+  -> Substitution (AST binder sig) i o 
+  -> AST binder sig i 
+  -> AST binder sig o
 \end{minted}
 
 Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction \cite{freefoil2024}, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
 
 Additionally, Free Foil supports a template-based approach where scope-safe representations can be automatically derived from naïve AST definitions using Template Haskell, allowing seamless integration with parser generators like BNF Converter (BNFC) \cite{ForsbergRanta2004}.
 
+Because a Free Foil signature is an ordinary bifunctor, traversals over the resulting syntax can reuse standard datatype-generic programming techniques instead of bespoke recursion. Generic traversal has a long lineage in Haskell, from recursion schemes over the fixed point of a functor \cite{recursionSchemes1991} to Scrap Your Boilerplate \cite{syb2003}. Free Foil fits this tradition: deriving \haskell{Bifunctor} and \haskell{Bifoldable} for a signature suffices to fold over every node of any language's syntax, which is exactly the property the IDE features in this thesis rely on to stay language-agnostic.
+
+\section{Language-Agnostic IDE Tooling}
+\label{sec:language-agnostic-tooling}
+
+The techniques surveyed so far address name capture from the perspective of representing and manipulating terms inside a single language implementation. 
+A complementary line of research asks a broader question: can name binding and resolution be described once, in a language-independent way, so that editor services such as go-to-definition, code completion, and rename refactoring are derived generically rather than re-implemented for every language?
+This is precisely the ambition shared by this thesis, and the most developed answer to date is the line of work on scope graphs by the Delft programming languages group, which underpins the Spoofax language workbench \cite{spoofax2010}.
+
+\subsection{Scope Graphs: A Theory of Name Resolution}
+\label{subsec:scope-graphs}
+
+Neron, Tolmach, Visser, and Wachsmuth \cite{scopeGraphs2015} observe that name resolution ``cuts across the local inductive structure of programs'': the declaration introduced by a \texttt{let} node may be referenced by an arbitrarily distant descendant, and qualified or imported names escape lexical nesting entirely. 
+Defining resolution directly over the abstract syntax tree therefore leads to ad-hoc, per-language symbol-table code that is duplicated across the compiler, the IDE, and any mechanized semantics. 
+Their proposal is to factor name resolution into two stages: a language-specific construction of a language-independent scope graph from the AST, followed by a language-independent resolution process over that graph.
+
+A scope graph collapses all AST nodes that ``behave uniformly with respect to name resolution'' into nodes called scopes. 
+Each scope carries a set of declarations (binding occurrences $x^D_i$, indexed by their AST position $i$) and references (applied occurrences $x^R_i$). 
+Edges between scopes encode visibility: a parent edge $\mathsf{P}$ models lexical nesting, while an import edge models the inclusion of a named scope's contents (used to model ML-style modules, and, elegantly, Java class inheritance as ``the \texttt{extends} clause playing the role of import'').
+Resolution is then specified declaratively as a resolution calculus that searches for a path from a reference to a declaration. 
+Shadowing, where an inner declaration hides an outer one, is captured not by deleting candidates but by a specificity ordering on paths: a path with fewer parent steps is more specific, local declarations are preferred over imports, and imports over lexical parents. 
+A reference resolves to a declaration only if that declaration is visible, that is, reachable via a path that no other resolution shadows. 
+The authors give a deterministic, terminating resolution algorithm built from an environment-shadowing operator and prove it sound and complete with respect to the calculus.
+
+Crucially for the goals of this thesis, scope graphs are explicitly designed to support front-end tooling rather than only well-formed programs. 
+The calculus deliberately admits ambiguous resolutions (multiple declarations for one reference) and unresolved references (free variables), because ``such programs are the normal case in IDEs and other front-end tools.''
+On top of resolution, the authors derive language-independent notions of $\alpha$-equivalence, in which two programs are $\alpha$-equivalent if they are structurally identical up to identifiers and induce the same equivalence classes of positions, and of valid renaming as a renaming that preserves $\alpha$-equivalence, that is, introduces no capture. 
+This is exactly the rename-refactoring service an IDE must provide, obtained here as a corollary of the resolution theory rather than as bespoke per-language code.
+
+\subsection{Scopes as Types: From Resolution to Type Checking}
+\label{subsec:scopes-as-types}
+
+The original scope-graph framework resolves names but says nothing about types, and it was limited to simple, nominal type systems where a type is identified by a name. 
+Van Antwerpen, Bach Poulsen, Rouvoet, and Visser \cite{scopesAsTypes2018} extend the framework with the insight that a type can itself be modeled as a scope. 
+A record type, a class, or a parameterized type all bind names internally; by representing such a type as a scope in the graph, the internal structure of types is expressed with the very same generic machinery used for ordinary lexical binding. 
+Structural subtyping becomes a visibility edge between scopes, and instantiating a generic type becomes the creation of a fresh scope that refines a type parameter's binding.
+
+To make these specifications executable as type checkers, the authors generalize resolution in two ways and embed it in a constraint language. 
+First, plain references are generalized to scope graph queries parameterized by a regular-expression label well-formedness predicate and a per-query visibility ordering, so that different namespaces can obey different visibility policies. 
+Second, they introduce \texttt{Statix}, a declarative meta-language in which a language designer writes guarded inference-rule-style constraints that simultaneously construct the scope graph and query it, with unification handling type terms. 
+The key engineering contribution is decoupling traversal order from solving order: because constraints are solved by a generic solver rather than during a fixed AST traversal, the language designer is freed from manually staging passes to ``collect information before it is needed'' (for example, binding all members of a recursive group before checking their bodies). 
+The solver guarantees sound resolution over the gradually-built graph by tracking which scopes may still be extended and delaying any query that could traverse an incomplete scope. 
+The approach is implemented in Spoofax and validated on the simply-typed lambda calculus with records, System F, and Featherweight Generic Java, yielding editors with type checking from a single declarative specification.
+
+\subsection{Comparison with Free Foil}
+\label{subsec:scope-graphs-vs-free-foil}
+
+Scope graphs and Free Foil pursue the same overarching goal, a single, language-independent treatment of binding from which tooling can be derived, but they sit at opposite ends of a design axis, and this contrast motivates the present work.
+
+\paragraph{Where correctness is enforced.}
+Free Foil encodes scope in the host language's type system: every name, scope, and binder is indexed by a phantom kind \haskell{S}, and the Haskell compiler statically rejects any operation mixing incompatible scopes. 
+Ill-scoped terms are unrepresentable, and capture-avoiding substitution is correct by construction. 
+Scope graphs, by contrast, use an extrinsic model: the graph is an ordinary data structure built alongside the AST, and resolution is a runtime search whose correctness is established by meta-theoretic proof (soundness and completeness of the algorithm with respect to the calculus) rather than by the type system of the implementation language. 
+A bug in the AST-to-graph mapping yields wrong resolutions silently; in Free Foil an analogous mistake is typically a compile-time type error.
+
+\paragraph{Expressiveness of binding.}
+This is where scope graphs are clearly ahead. 
+The scope-graph calculus natively handles non-lexical binding, including modules, qualified names, transitive and cyclic imports, and class inheritance, through import edges and tunable well-formedness and visibility policies \cite{scopeGraphs2015}, and ``Scopes as Types'' \cite{scopesAsTypes2018} pushes this all the way to structural and parametric type systems. 
+Free Foil, building on the Foil \cite{foil2023} and free scoped monads \cite{freemonads2024}, is designed around lexical binding: a binder extends the scope of the subtree it dominates. 
+Non-lexical structures are not thereby excluded, however. 
+Because \haskell{S} is only a phantom tag on scopes and the binder is an ordinary type parameter, a scope is an unordered set of names by construction, and a global namespace or an import can be encoded indirectly, as a synthetic binder that extends the scope with the relevant names, with a qualified import reducing to a single-name binder. 
+What scope graphs provide and Free Foil does not is the resolution machinery itself: import edges, visibility and well-formedness policies, and cross-module path-finding are derived automatically there, whereas here they must be implemented by hand, and cross-module name identity must be tracked manually because names are scope-local and can be transported only along a scope extension. 
+Such manual encodings also fall partly outside Free Foil's by-construction guarantees: the compiler still rejects mixing incompatible scopes, but it does not verify that a synthetic binder faithfully models the intended visibility. 
+The gap is thus one of prepacked expressiveness and ergonomics rather than of what the \haskell{S}-indexed representation can ultimately encode.
+
+\paragraph{Treatment of erroneous and partial programs.}
+Scope graphs are explicitly engineered for the IDE setting: ambiguous and unresolved references are first-class, which is essential for editor services over the incomplete, frequently-broken programs typical of live editing \cite{scopeGraphs2015}. 
+Free Foil's intrinsic guarantees assume a well-scoped term; mapping a partially-written or ill-scoped source file into an \haskell{S}-indexed AST requires additional care at the boundary, an issue the implementation chapters of this thesis address directly.
+
+\paragraph{Derived services.}
+Both frameworks deliver the same headline IDE features generically. 
+Scope graphs derive go-to-definition (path to a declaration), rename (validity defined via $\alpha$-equivalence), and, via Statix, type checking, all from a declarative specification interpreted by a generic solver. 
+Free Foil derives capture-avoiding substitution, normalization, and, because a Free Foil signature is a \haskell{Bifunctor} and hence \haskell{Bifoldable}, generic recursive traversal, from a declarative bifunctor signature compiled by the Haskell type checker. 
+In other words, Spoofax and Statix achieve genericity through runtime constraint solving over an untyped graph, whereas Free Foil achieves it through compile-time type-level guarantees over a scoped AST.
+
+\paragraph{Positioning of this thesis.}
+The two approaches are complementary rather than competing. 
+Scope graphs demonstrate the breadth of binding patterns a truly language-agnostic tool must eventually cover and set the standard for IDE-oriented robustness, but they obtain their guarantees through proof and runtime search and are tied to the Spoofax ecosystem. 
+This thesis instead asks how far the intrinsic, type-safe route of Free Foil can be carried into a standalone, LSP-based language server: trading some of the breadth of scope graphs (notably non-lexical binding and rich type systems) for zero-cost, compiler-checked scope safety and a configuration-driven implementation that lives in mainstream Haskell tooling rather than a dedicated workbench.
+
+\subsection{Language Workbenches}
+\label{subsec:language-workbenches}
+
+Spoofax is one of a broader class of language workbenches, tools built on the premise of ``define a language, get an IDE for free.'' Systems such as Xtext \footnote{\url{https://eclipse.dev/Xtext/}}, JetBrains MPS \footnote{\url{https://www.jetbrains.com/mps/}}, and Rascal \footnote{\url{https://www.rascal-mpl.org/}} let a designer specify a language's grammar, name binding, and semantics, and generate editor support from that specification. The framework of this thesis shares this philosophy but is deliberately narrower: rather than a full workbench with its own meta-languages and environment, it targets the single goal of deriving a standalone LSP server from a Free Foil signature, and operates within ordinary Haskell tooling.
+
+\subsection{Tree-sitter}
+\label{subsec:tree-sitter}
+
+A different route to language-agnostic tooling is taken by Tree-sitter \footnote{\url{https://tree-sitter.github.io/tree-sitter/}}, an incremental parsing library that re-parses fast enough for every keystroke and recovers gracefully from syntax errors. From a single declarative grammar it powers syntax highlighting and structural navigation across many editors and dozens of languages. Tree-sitter is, however, purely syntactic: it has no notion of name binding, scope, or types, so semantic services such as go-to-definition or rename must still be built on top of it per language. It is thus complementary to the present work, which is concerned precisely with the scope-aware layer that Tree-sitter leaves out.
+
 \section{Language Server Protocol (LSP)}
+\label{sec:lsp}
 
-The Language Server Protocol \cite{lsp} standardizes communication between language servers and editors, allowing a common interface for diverse programming environments.
+The Language Server Protocol (LSP) \cite{lsp} standardizes communication between a language server, a process that performs language analysis, and a language client in the editor. 
+This section reviews what the protocol defines, focusing on the features implemented by the framework of this thesis, and surveys the libraries used to build servers.
 
-\subsubsection{Rust Language Server}
+\subsection{Protocol Foundations}
+\label{subsec:lsp-foundations}
 
-Rust-analyzer \footnote{\url{https://github.com/rust-lang/rust-analyzer/tree/master}} represents a modern approach with internal architecture structured as a set of libraries for analyzing Rust code, emphasizing performance and correctness. 
-Its design focuses on providing comprehensive language understanding through incremental analysis.
+LSP is built on JSON-RPC: every message is a JSON object exchanged over a transport such as standard input/output or a socket. 
+The protocol distinguishes three kinds of messages. 
+Requests carry an identifier and expect a matching response, whereas notifications carry no identifier and are fire-and-forget. 
+Communication is bidirectional: both client and server may initiate requests and notifications, which is what allows a server to push diagnostics to the editor without being asked.
 
-\subsubsection{Go Language Server}
+A session begins with a capability negotiation. 
+The client opens with an \texttt{initialize} request advertising the features it supports; the server replies with its own server capabilities, declaring which requests it can answer and configuring options such as how documents should be synchronized. 
+Only after the client acknowledges with an \texttt{initialized} notification does normal operation begin. 
+This handshake means a server need not implement the entire specification: it offers a subset of features, and the editor adapts to whatever is advertised. 
+A symmetric \texttt{shutdown}/\texttt{exit} exchange ends the session.
 
-Gopls \footnote{\url{https://go.dev/gopls/}} aims to be a full LSP implementation that standardizes features according to the LSP specification while maintaining cleanliness and robustness. 
-It has achieved community-wide adoption as the definitive Go language server, supported by the entire Go ecosystem.
+\subsection{Text Document Synchronization}
+\label{subsec:lsp-sync}
 
-\subsubsection{Python Language Server}
+A language server does not, in general, read source files from disk. 
+Instead the client owns the authoritative, possibly-unsaved contents of every open document and streams changes to the server. 
+Three notifications govern this lifecycle: \texttt{textDocument/didOpen} announces a newly opened document together with its full text, \texttt{textDocument/didChange} reports edits, and \texttt{textDocument/didClose} signals that the client no longer tracks it. 
+Documents are identified by URIs and carry a monotonically increasing version number so that edits can be ordered unambiguously.
 
-Python implementations often build upon existing analysis libraries like Jedi \footnote{\url{https://pypi.org/project/jedi/}}, demonstrating how LSP servers can leverage mature language analysis tools while providing standardized editor integration.
+The server chooses, during capability negotiation, how much of a document each change notification carries. 
+With full synchronization the client resends the entire document on every edit, whereas incremental synchronization sends only the changed ranges, leaving the server to maintain the document state. 
+Full synchronization is simpler to implement at the cost of reprocessing the whole file on each keystroke; this trade-off is directly relevant to the caching and re-analysis strategy discussed in the implementation chapters.
 
-\subsubsection{Haskell Language Server}
+\subsection{Language Features}
+\label{subsec:lsp-features}
 
-The Haskell Language Server (HLS) \footnote{\url{https://github.com/haskell/haskell-language-server}} serves as the primary GHC-oriented LSP implementation for Haskell. It functions as an integration layer that combines multiple analysis engines and plugins to provide comprehensive language support. HLS architecture employs a plugin system that allows modular extension of functionality
+\paragraph{Positions and ranges.}
+Almost every language feature is phrased in terms of source locations. 
+LSP encodes a position as a zero-based \texttt{(line, character)} pair and a range as a start--end pair of positions. 
+Because these offsets are zero-based and counted in UTF-16 code units rather than Unicode characters, a server must translate between its internal representation and the protocol's convention; parsers that report one-based lines and columns, as is common, require an off-by-one adjustment at the boundary. 
+Mapping each abstract syntax tree node to the range of source text it spans is therefore a prerequisite for almost all the features below.
 
-\subsection{Libraries for LSP}
+\paragraph{Navigation and editing.}
+The \texttt{textDocument/definition} request asks the server to resolve the symbol under the cursor to the location of its declaration, the canonical ``go-to-definition'' service. 
+The \texttt{textDocument/rename} request asks for all edits needed to consistently rename a symbol throughout the document; the server returns a workspace edit describing the textual changes. 
+Both of these are fundamentally name-resolution queries, which is precisely where intrinsically scoped representations have something to offer.
 
-Some frameworks propose a general language server implementation following Microsoft LSP, simplifying language server development for any target.
+\paragraph{Informational features.}
+The \texttt{textDocument/hover} request returns documentation or type information to display when the cursor rests on a symbol. 
+The \texttt{textDocument/semanticTokens} request provides token-level classification for semantic syntax highlighting, allowing the editor to color identifiers according to whether they denote, say, a variable, a function, or a type, which purely lexical highlighting cannot recover. 
+Tokens are returned in a compact, delta-encoded integer format relative to the previous token.
 
-\subsubsection{Eclipse LSP4J}
+\paragraph{Diagnostics.}
+Errors and warnings are delivered through \texttt{textDocument/publishDiagnostics}, a server-initiated notification: rather than waiting to be queried, the server pushes a list of diagnostics, each consisting of a range, a severity, and a message, to the client whenever its analysis of a document changes. 
+This is the channel through which scope errors, type mismatches, and unbound symbols surface to the user.
 
-LSP4J \footnote{\url{https://github.com/eclipse-lsp4j/lsp4j}} is a generic LSP implementation framework allowing to implement language servers in Java. Metals for Scala \footnote{\url{https://github.com/scalameta/metals}} and Kotlin Language Server \footnote{\url{https://github.com/Kotlin/kotlin-lsp}} both base on LSP4J.
+\subsection{Libraries for Building Language Servers}
+\label{subsec:lsp-libraries}
 
-\subsubsection{Haskell LSP}
+Because the protocol is verbose and its message types numerous, most servers are built on a library that handles the JSON-RPC framing, message (de)serialization, and lifecycle bookkeeping, leaving the author to supply only the language-specific logic. 
+Eclipse LSP4J \footnote{\url{https://github.com/eclipse-lsp4j/lsp4j}} provides this foundation on the JVM and underpins Scala's Metals \footnote{\url{https://github.com/scalameta/metals}} and the Kotlin Language Server \footnote{\url{https://github.com/Kotlin/kotlin-lsp}}. 
+For Haskell, the \texttt{haskell/lsp} \footnote{\url{https://github.com/haskell/lsp}} family (including \texttt{lsp-types} and \texttt{lsp-test}) offers type-safe representations of the LSP message types together with the communication machinery, and has been hardened through its use in the Haskell Language Server (HLS). 
+The framework presented in this thesis is built on \texttt{haskell/lsp}, delegating protocol handling to it and contributing the layer above: the generic, Free-Foil-based analysis that answers the requests described in Section~\ref{subsec:lsp-features}.
 
-The \texttt{haskell/lsp} \footnote{\url{https://github.com/haskell/lsp}} library family (including \texttt{lsp-types} and \texttt{lsp-test}) provides Haskell with low-level protocol handling capabilities. 
-This ecosystem offers type-safe implementations of LSP message types and communication handling. 
-The library has been battle-tested through its use in production systems like Haskell Language Server (HLS).
-
-TODO: describe the LSP functionality relevant to the implementation
-
-\subsection{Comparative Analysis}
-
-\subsubsection{Advantages of Current Approaches}
-
-\begin{itemize}
-\item Standardization: LSP enables editor-agnostic tooling development 
-\item Modular Architecture: Modern implementations like HLS support plugin-based extensibility 
-\item Performance Focus: Leading implementations prioritize incremental analysis and caching strategies
-\item Community Consolidation: Languages like Go have achieved unified implementations (gopls) 
-\end{itemize}
-
-
-\subsubsection{Disadvantages and Challenges}
-
-\begin{itemize}
-\item Performance Issues: Haskell implementations face challenges with Template Haskell and large projects 
-\item Concurrency Limitations: Some LSP servers struggle with concurrent usage patterns 
-\item Protocol Complexity: Full LSP specification compliance requires significant implementation effort
-\item Resource Consumption: Language servers can consume substantial CPU and memory resources during analysis 
-\end{itemize}
+Crucially, these libraries are protocol frameworks, not semantic ones. 
+They marshal messages and manage document state, but they impose no model of abstract syntax, name binding, or scope; the language author is left to implement resolution, renaming, and type checking from scratch for every language. 
+This is the gap the present work targets: by layering a scope-safe, language-agnostic analysis over a protocol library, the repetitive semantic core of a server is provided once rather than rewritten per language.
 
 \section{Conclusion}
 
-This literature review has explored two complementary areas: techniques for safe and efficient name handling in language implementation, and the practical ecosystem of LSP tooling.
+This review examined three threads that together frame the problem this thesis addresses: techniques for safe and efficient handling of bound variables, language-agnostic models of name binding and resolution, and the Language Server Protocol that connects analysis to the editor.
 
-On the theoretical side, approaches to name capture have evolved from error-prone manual renaming to intrinsically scoped systems like the Foil and Free Foil. These modern solutions enforce scoping correctness at the type level while enabling zero-cost substitutions—offering both safety and performance.
+The first thread shows a steady progression from error-prone manual renaming, through De Bruijn indices and nominal techniques, to intrinsically scoped representations. The Foil enforces scope correctness at the type level while retaining the single-pass efficiency of the rapier, and Free Foil generalizes this guarantee to any language described by a bifunctor signature, deriving capture-avoiding substitution and generic traversal without per-language boilerplate. This makes type-safe scoping not merely correct but reusable.
 
-On the practical side, LSP implementations such as \texttt{gopls}, \texttt{rust-analyzer}, and the Haskell Language Server demonstrate how standardized protocols enable powerful, editor-agnostic developer tooling. Many of these servers—like Python’s—rely on libraries such as Jedi for static analysis and autocompletion.
+The second and third threads reveal where that reusability has not yet been applied. Scope graphs demonstrate that name resolution, $\alpha$-equivalence, and renaming can be specified once and reused across languages, but they obtain their guarantees through meta-theoretic proof and runtime constraint solving rather than the host type system, and the most complete realization lives inside the Spoofax workbench. The Language Server Protocol, meanwhile, standardizes how such services reach any editor, and a mature ecosystem of libraries handles its message-level concerns, yet these libraries stop at the protocol boundary and impose no model of binding or scope, leaving each language to reimplement resolution, renaming, and type checking from scratch.
 
-Yet a gap remains: despite advances in type-safe scoping, most LSPs still use traditional, extrinsically scoped ASTs, leaving them vulnerable to subtle binding bugs and inefficiencies. Integrating intrinsically scoped representations like the Foil into language servers presents a promising path toward more robust and performant tooling—especially for languages with rich binding semantics.
-
-This thesis builds on that opportunity, aiming to bridge formal scoping guarantees with real-world LSP development.
-
-% The evolution of techniques for handling bound variables reflects a persistent tension between safety, efficiency, and expressiveness. Early approaches like naive substitution and De Bruijn indices prioritize correctness but sacrifice performance and ergonomics. The foil represents a significant advance by combining the efficiency of the rapier algorithm with strong type-level guarantees, ensuring capture-avoiding substitution is both fast and correct.
-
-% Free Foil builds upon this foundation by introducing generic programming techniques that eliminate boilerplate while preserving the foil's performance characteristics. By deriving scope-safe syntax representations directly from second-order signatures, it makes the foil's benefits accessible to language implementers without requiring deep expertise in advanced type system features.
-
-% This work demonstrates that sophisticated type system features can be harnessed not just for safety but also for code generation and abstraction, allowing implementers to focus on language semantics rather than the intricacies of variable binding. The resulting framework supports rapid prototyping of languages with complex binding structures while maintaining the performance necessary for practical use.
-
-% Future work could explore further optimizations to close the small performance gap between direct foil implementations and Free Foil, as well as extending the approach to support more complex binding patterns and integration with proof assistants and theorem provers requiring high-assurance implementations of capture-avoiding substitution.
-
-
-
-
-% \Blindtext[2]
-
-% \section{Another Section}
-% \Blindtext[1]
-% \newpage
-% With the widespread of computing systems, information processing, and net working, the practice of replacing paper documentation to electronic documentation has become more and more common. Electronic documentation within the workplace has several advantages over the traditional one, such as being easy to share, copy and edit the document. However, these advantages also present a problem. A malefactor, having access to the system, can easily copy and leak the document, without leaving any trace. Such actions are virtually undetectable in most systems, so, the malefactor goes unpunished. In this thesis, we propose one solution to the problem: digital watermarking. 
-
-% Every electronic document within the protected system is marked with an invisible digital watermark, containing information about the user, accessing this particular document. Therefore, in case the protected company discovers the leaked document, they will be able to identify the machine of the malicious person and time when the document was leaked. This will allow inflicting punishment on the malefactor, recovering the costs of the leak, and potentially preventing future ones. 
-
-% \begin{longtable}{c|c}
-% \caption[This is the title I want to appear in the List of Tables]{Simulation Parameters} \label{table:secsimulation_params} \\
-% \hline
-% A & B  \\
-% \hline
-% \endfirsthead
-% \multicolumn{2}{@{}l}{} \\
-% \hline
-% A & B \\
-% \hline
-% \endhead
-% \hline
-%  \textbf{Parameter} & \textbf{Value}\\
-%  \hline
-%  Number of vehicles & $|\mathcal{V}|$\\
-%  \hline
-%  Number of RSUs & $|\mathcal{U}|$\\
-%  \hline
-%  RSU coverage radius & 150 m\\
-%  \hline
-%  V2V communication radius & 30 m\\
-%  \hline
-%  Smart vehicle antenna height & 1.5 m\\
-%  \hline
-%  RSU antenna height & 25 m\\
-%  \hline
-%  Smart vehicle maximum speed & $v_{max}$ m/s\\
-%  \hline
-%  Smart vehicle minimum speed & $v_{min}$ m/s\\
-%  \hline
-%  Common smart vehicle cache capacities & $[50, 100, 150, 200, 250]$ mb\\
-%  \hline
-%  Common RSU cache capacities & $[5000,1000,1500,2000,2500]$ mb\\
-%  \hline
-%  Common backhaul rates & $[75, 100, 150]$ mb/s\\
-%  \hline
-% \end{longtable}
-
-% \begin{figure}[hbt]
-% \centering
-% \includegraphics[]{figs/images.png}
-% \caption{One kernel at $x_s$ (\emph{dotted kernel}) or two kernels at
-% $x_i$ and $x_j$ (\textit{left and right}) lead to the same summed estimate
-% at $x_s$. This shows a figure consisting of different types of
-% lines. Elements of the figure described in the caption should be set in
-% italics, in parentheses, as shown in this sample caption.}
-% \label{fig:secex}
-% \end{figure}
-
-% This description implies several essential properties of the task at hand:
-% \begin{enumerate}
-%     \item Watermark must contain all necessary information, but still, be placeable and recognizable even on smaller images. The produced watermark must be compact but have the possibility to store enough information. 
-%     \item To prevent easy tampering, the watermark must be invisible to the naked eye (and, preferably, to basic image parsing tools). If malefactor does not know about the existence of watermark, they might not even try to remove it and disable it. 
-% \end{enumerate}
+A gap therefore remains between the two halves of the picture. The machinery for intrinsically scope-safe, language-agnostic syntax exists in Free Foil, and a standard transport for editor services exists in LSP, but no work connects them: language servers are still typically built on extrinsically scoped ASTs with bespoke per-language logic, vulnerable to subtle binding bugs and to repeated implementation effort. Carrying Free Foil's compile-time scope safety across the protocol boundary into a single, configuration-driven server is the opportunity this thesis pursues, trading the broader binding expressiveness of scope graphs for zero-cost, compiler-checked guarantees and a substantially smaller implementation burden per language.

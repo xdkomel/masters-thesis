@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{resolveType}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{Type}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Type}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Type}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{String}\PYG{p}{])}
+\PYG{n+nf}{resolveType}\PYG{+w}{ }\PYG{n}{expected}\PYG{+w}{ }\PYG{n}{inferred}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{expected}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{anyTypeEmp}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{inferred}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{[]}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{expected}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{inferred}\PYG{+w}{   }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{inferred}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{[]}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{otherwise}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{expected}\PYG{p}{,}
+\PYG{+w}{      }\PYG{p}{[}\PYG{l+s}{\PYGZdq{}expected \PYGZdq{}}\PYG{+w}{ }\PYG{o}{++}\PYG{+w}{ }\PYG{n}{show}\PYG{+w}{ }\PYG{n}{expected}
+\PYG{+w}{       }\PYG{o}{++}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}, got \PYGZdq{}}\PYG{+w}{ }\PYG{o}{++}\PYG{+w}{ }\PYG{n}{show}\PYG{+w}{ }\PYG{n}{inferred}\PYG{p}{])}
+\end{MintedVerbatim}

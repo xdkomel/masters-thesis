@@ -1,0 +1,98 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{7}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Binding and Scopes}{8}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Contribution}{9}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Thesis Outline}{11}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Literature Review}{12}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Name Capture}{12}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Intrinsic Scoping}{13}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}The Foil}{14}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Free Foil}{16}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Language-Agnostic IDE Tooling}{19}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Scope Graphs: A Theory of Name Resolution}{19}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Scopes as Types: From Resolution to Type Checking}{21}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Comparison with Free Foil}{22}{subsection.2.2.3}%
+\contentsline {paragraph}{Where correctness is enforced.}{22}{section*.4}%
+\contentsline {paragraph}{Expressiveness of binding.}{22}{section*.5}%
+\contentsline {paragraph}{Treatment of erroneous and partial programs.}{23}{section*.6}%
+\contentsline {paragraph}{Derived services.}{24}{section*.7}%
+\contentsline {paragraph}{Positioning of this thesis.}{24}{section*.8}%
+\contentsline {subsection}{\numberline {2.2.4}Language Workbenches}{24}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Tree-sitter}{25}{subsection.2.2.5}%
+\contentsline {section}{\numberline {2.3}Language Server Protocol (LSP)}{25}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Protocol Foundations}{26}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Text Document Synchronization}{26}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Language Features}{27}{subsection.2.3.3}%
+\contentsline {paragraph}{Positions and ranges.}{27}{section*.9}%
+\contentsline {paragraph}{Navigation and editing.}{27}{section*.10}%
+\contentsline {paragraph}{Informational features.}{28}{section*.11}%
+\contentsline {paragraph}{Diagnostics.}{28}{section*.12}%
+\contentsline {subsection}{\numberline {2.3.4}Libraries for Building Language Servers}{28}{subsection.2.3.4}%
+\contentsline {section}{\numberline {2.4}Conclusion}{29}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Methodology}{31}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Design Requirements}{31}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Deprioritized Criteria}{32}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Evaluation Criteria}{32}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Language Server Methods}{33}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Building a Tree}{33}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Agnostic Tree Traversal}{35}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Locating a Node}{37}{subsection.3.2.3}%
+\contentsline {paragraph}{Making signature nodes locatable.}{38}{section*.13}%
+\contentsline {paragraph}{Making pattern nodes locatable.}{38}{section*.14}%
+\contentsline {paragraph}{Pattern structure requirement.}{38}{section*.15}%
+\contentsline {paragraph}{The \texttt {Var} wrapper problem.}{39}{section*.16}%
+\contentsline {paragraph}{Range testing and the search algorithm.}{39}{section*.17}%
+\contentsline {subsection}{\numberline {3.2.4}Name Definition and References}{41}{subsection.3.2.4}%
+\contentsline {paragraph}{Locating a definition.}{41}{section*.18}%
+\contentsline {paragraph}{Collecting references.}{43}{section*.19}%
+\contentsline {paragraph}{Composing definition and reference search.}{44}{section*.20}%
+\contentsline {subsection}{\numberline {3.2.5}Type Checking}{45}{subsection.3.2.5}%
+\contentsline {paragraph}{Reading types back.}{45}{section*.21}%
+\contentsline {paragraph}{Specifying deduction rules.}{45}{section*.22}%
+\contentsline {paragraph}{Orchestrating the recursion.}{46}{section*.23}%
+\contentsline {paragraph}{Example: checking a function application.}{47}{section*.24}%
+\contentsline {subsection}{\numberline {3.2.6}Code Highlighting}{49}{subsection.3.2.6}%
+\contentsline {paragraph}{Why two type classes are needed.}{49}{section*.25}%
+\contentsline {paragraph}{Token list types.}{50}{section*.26}%
+\contentsline {paragraph}{Generic traversal.}{50}{section*.27}%
+\contentsline {paragraph}{Ordering constraint.}{51}{section*.28}%
+\contentsline {subsection}{\numberline {3.2.7}Diagnostics}{52}{subsection.3.2.7}%
+\contentsline {paragraph}{Why two type classes are needed.}{52}{section*.29}%
+\contentsline {paragraph}{What the user provides.}{53}{section*.30}%
+\contentsline {paragraph}{Generic traversal.}{53}{section*.31}%
+\contentsline {subsection}{\numberline {3.2.8}Hover Messages}{54}{subsection.3.2.8}%
+\contentsline {paragraph}{Why two type classes are needed.}{55}{section*.32}%
+\contentsline {paragraph}{What the user provides.}{55}{section*.33}%
+\contentsline {paragraph}{Producing the message.}{56}{section*.34}%
+\contentsline {chapter}{\numberline {4}Implementation}{57}{chapter.4}%
+\contentsline {section}{\numberline {4.1}LSP Interface}{57}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Language Server Configuration}{58}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Building a Tree}{59}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Caching}{60}{section.4.2}%
+\contentsline {paragraph}{Why \texttt {IORef (Maybe \ldots )} is necessary.}{61}{section*.36}%
+\contentsline {subsection}{\numberline {4.2.1}Name Collisions}{62}{subsection.4.2.1}%
+\contentsline {section}{\numberline {4.3}Example Project}{64}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Signature and Annotations}{64}{subsection.4.3.1}%
+\contentsline {paragraph}{Framework requirements on user-defined types.}{66}{section*.37}%
+\contentsline {subsection}{\numberline {4.3.2}Type Class Instances}{67}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Visual Studio Code Demo}{68}{subsection.4.3.3}%
+\contentsline {chapter}{\numberline {5}Evaluation and Discussion}{69}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Evaluation against Design Criteria}{69}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Feature Completeness}{69}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Minimal Entry Threshold}{70}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Correctness}{70}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Language Agnosticism}{71}{subsection.5.1.4}%
+\contentsline {subsection}{\numberline {5.1.5}Worst-Case Complexity}{71}{subsection.5.1.5}%
+\contentsline {subsection}{\numberline {5.1.6}VS Code Integration}{72}{subsection.5.1.6}%
+\contentsline {section}{\numberline {5.2}Automation Analysis}{72}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Complexity Analysis}{74}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Limitations and Future Work}{76}{section.5.4}%
+\contentsline {paragraph}{Single-file scope.}{76}{section*.40}%
+\contentsline {paragraph}{No dependency graph for cache invalidation.}{76}{section*.41}%
+\contentsline {paragraph}{Type inference limitations.}{76}{section*.42}%
+\contentsline {paragraph}{Incremental type checking.}{77}{section*.43}%
+\contentsline {paragraph}{Search complexity improvement.}{77}{section*.44}%
+\contentsline {paragraph}{Default and complementary highlighting.}{77}{section*.45}%
+\contentsline {paragraph}{Pattern structure constraint.}{78}{section*.46}%
+\contentsline {chapter}{\numberline {6}Conclusion}{79}{chapter.6}%
+\contentsline {chapter}{Bibliography cited}{82}{chapter*.47}%

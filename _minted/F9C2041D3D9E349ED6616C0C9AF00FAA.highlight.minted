@@ -1,0 +1,15 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{diagnoseAST}\PYG{+w}{ }\PYG{o+ow}{::}
+\PYG{+w}{  }\PYG{p}{(}\PYG{+w}{ }\PYG{k+kt}{CoSinkable}\PYG{+w}{ }\PYG{n}{binder}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Bifoldable}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{DiagnosableSig}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{DiagnosablePat}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{p}{)}
+\PYG{+w}{  }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{Diagnostic}\PYG{p}{]}
+\PYG{n+nf}{diagnoseAST}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n+nf}{\PYGZbs{}}\PYG{k+kr}{case}
+\PYG{+w}{  }\PYG{k+kt}{Var}\PYG{+w}{ }\PYG{k+kr}{\PYGZus{}}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{[]}
+\PYG{+w}{  }\PYG{k+kt}{Node}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{diagnose}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{++}\PYG{+w}{ }\PYG{n}{bifoldMap}
+\PYG{+w}{    }\PYG{p}{(}\PYG{n+nf}{\PYGZbs{}}\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}
+\PYG{+w}{      }\PYG{n}{diagnosePat}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{o}{++}\PYG{+w}{ }\PYG{n}{diagnoseAST}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{diagnoseAST}
+\PYG{+w}{    }\PYG{n}{n}
+\end{MintedVerbatim}

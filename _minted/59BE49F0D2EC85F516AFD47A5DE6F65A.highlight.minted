@@ -1,0 +1,11 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{FlanF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{VarF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{k+kt}{String}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{AppF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{LamF}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LamAnn}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{s}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{LetF}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LetAnn}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{n}{s}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{PairF}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{PairAnn}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{IfF}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{IfAnn}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}\PYG{+w}{ }\PYG{n}{t}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{ConstF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{k+kt}{FlanConst}
+\PYG{+w}{  }\PYG{o}{|}\PYG{+w}{ }\PYG{k+kt}{ErrorF}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{a\PYGZsq{}}\PYG{+w}{ }\PYG{k+kt}{String}
+\end{MintedVerbatim}

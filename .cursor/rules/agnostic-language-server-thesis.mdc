@@ -1,0 +1,159 @@
+---
+description: Source hierarchy, writing style, and chapter structure for Agnostic Language Server thesis content
+globs: chapters/*.tex
+alwaysApply: true
+---
+
+# Agnostic Language Server — Thesis Authoring
+
+## Source Hierarchy
+
+When writing or revising ALS content, treat sources in this order (most to least authoritative):
+
+1. **Haskell library (canonical)** — `/Users/kf/Documents/projects/uni/free-foil-ls/src/`
+   - Entry point / re-export facade: `AgnosticLanguageServer.hs`
+   - Core modules: `AgnosticLanguageServer/{AST,Cache,Classes,Common,Types}.hs`
+   - Handlers: `AgnosticLanguageServer/Handlers/{Definition,Diagnostics,Hover,Rename,SemanticTokens,Sync}.hs`
+2. **Example consumer (reference only)** — `/Users/kf/Documents/projects/uni/free-foil-ls/flan-language-server/src/LanguageServer/AgnosticLanguageServerFlan.hs` — a complete language server built *on top of* the library; not part of the library itself
+3. **Russian paper** — `.cursor/als_ru.md` — latest design decisions; concise global overview
+4. **Thesis text** — least authoritative; may lag behind or contain errors
+
+If sources disagree, follow the `free-foil-ls` library source. Use the Russian paper for structure and high-level design intent. Treat existing thesis prose as draft until verified against Haskell.
+
+Use `AgnosticLanguageServerFlan.hs` to understand how a consumer wires the library together, but do not present Flan code as library internals.
+
+### Module map (quick reference)
+
+| Module | Responsibility |
+|---|---|
+| `AgnosticLanguageServer` | Re-exports everything; defines `handlers` and `runLanguageServer` |
+| `AgnosticLanguageServer.AST` | `findNarrowest`, `typecheck`, and AST traversal utilities |
+| `AgnosticLanguageServer.Cache` | `LangEnv`, `LangStore`, `LSP` monad, cache read/write |
+| `AgnosticLanguageServer.Classes` | Type classes: `RangedSig`, `FoldablePat`, `HoverableSig/Pat`, `TokenizableSig/Pat`, `TypeDeductiveSig`, `TypedSig/Pat`, `DiagnosableSig/Pat` |
+| `AgnosticLanguageServer.Common` | Shared utilities |
+| `AgnosticLanguageServer.Types` | `LSConfiguration` and other top-level types |
+| `AgnosticLanguageServer.Handlers.Sync` | `buildCache`, file open/change/close handlers |
+| `AgnosticLanguageServer.Handlers.Definition` | Go-to-definition handler |
+| `AgnosticLanguageServer.Handlers.Diagnostics` | Diagnostics publishing |
+| `AgnosticLanguageServer.Handlers.Hover` | Hover handler |
+| `AgnosticLanguageServer.Handlers.Rename` | Rename handler |
+| `AgnosticLanguageServer.Handlers.SemanticTokens` | Semantic tokens handler |
+
+## Haskell Snippets in Prose
+
+When quoting or adapting code for the thesis, **strip import aliases** for readability:
+
+```haskell
+-- In source:  F.Name, F.Scope, F.AST, Map.fromList, T.pack
+-- In thesis:  Name, Scope, AST, fromList, pack
+```
+
+Common aliases to omit: `F` (Foil/Free-Foil), `Map`, `T` (Text), `LSP`, `R` (generated parser modules in the example).
+
+Keep types, class names, and logic faithful to the implementation; only simplify qualified names.
+
+### Snippet layout and line breaks
+
+Thesis code snippets use a **serif font**, not monospaced. Format for readability in that context:
+
+- **Line width:** keep every line **under 80 characters**. Break long lines rather than letting them run wide.
+- **No column alignment with spaces:** do not pad with spaces so similar clauses line up vertically — that only works in monospace. Avoid patterns like:
+
+```haskell
+fun argument = ...
+fun _        = ...
+```
+
+- **Use indentation instead:** break lines and nest with consistent indentation (typically two spaces per level). Short lines may stay on one row; longer constructs wrap with deeper nesting:
+
+```haskell
+data AST binder sig n where
+  -- Short line, fits fully
+  Var :: Name n -> AST binder sig n
+  -- Longer line, requires line breaks with nesting
+  Node
+    :: sig (ScopedAST binder sig n) (AST binder sig n)
+    -> AST binder sig n
+```
+
+**Multiline function types** — follow the patterns in the library source:
+
+Without constraints (`buildCache`):
+
+```haskell
+buildCache
+  :: String
+  -> (String -> [SomeScopeWithAST binder sig])
+  -> LSP (SomeScopeWithAST binder sig) ()
+```
+
+With constraints (`findNarrowest`):
+
+```haskell
+findNarrowest ::
+  ( Bifoldable sig
+  , RangedSig sig
+  , CoSinkable binder
+  , FoldablePat binder
+  , Distinct n )
+  => Position
+  -> AST binder sig n
+  -> Maybe
+      ( Either (SomePattern binder sig, SomeAST binder sig)
+               (SomeAST binder sig)
+      )
+```
+
+When a constrained signature still exceeds 80 characters, break the result type across lines with the same `=>`-body indentation as the argument types.
+
+### Snippet size and exposition
+
+Avoid large code blocks — they look bulky and bury the argument. Prefer prose for the logic, idea, and purpose of each step; use **small, focused snippets** only where a concrete example clarifies or anchors the explanation.
+
+- Explain *what* happens and *why* in English first; show code second (or inline a few lines mid-sentence when that suffices).
+- One snippet, one idea: a type signature, a single function clause, one record field group, one handler wiring step — not whole modules or long contiguous excerpts.
+- Trim boilerplate, imports, and unrelated context from snippets; the reader should see the minimum needed to understand the point.
+- When a flow has several steps, walk through them in prose and attach a short snippet per step rather than one monolithic listing.
+
+## Writing Style vs. Russian Paper
+
+| Russian paper (`.cursor/als_ru.md`) | Thesis (chapters 3–4) |
+|---|---|
+| Concise, skips explanations | Clear, neutral, full, factual, technical, unambiguous |
+| Global overview | Deeper analysis; may be verbose where depth is needed |
+| Single “implementation” section | Split into methodology vs. implementation |
+
+Do not mirror the paper's brevity in the thesis. Expand rationale, trade-offs, edge cases, and step-by-step algorithm descriptions.
+
+## Thesis prose and LaTeX
+
+The thesis should read as a formal academic document, not a web article or blog post.
+
+- **Do not use `\emph`.** Italic inline emphasis reads as rhetorical highlighting and lowers the tone. State the point in plain prose instead.
+- When introducing a term, define it once in context; do not rely on emphasis to mark it as important on every mention.
+- Reserve visual distinction for code (`\texttt{...}`), defined concepts on first use if the document class requires it, and standard structural elements (section titles, captions)—not for mid-sentence stress.
+- When revising existing text, replace `\emph{...}` with neutral wording or, where the content is genuinely a name or identifier, `\texttt{...}`.
+
+## Chapter Roles
+
+**Chapter 3 — Methodology** (`chapters/chapter3.tex`):
+- Broad overview of design space: requirements, alternatives, problems, trade-offs
+- Discuss options considered (including rejected ones) and why
+- Type classes, algorithms, and architecture at the conceptual level
+- Evaluation criteria and complexity analysis where relevant
+
+**Chapter 4 — Implementation** (`chapters/chapter4.tex`):
+- Final solutions as they appear in the `free-foil-ls` library modules
+- Real-world problems not obvious from theory alone (e.g. parallel scope collisions, `OffsetScope` vs. position-based binder lookup, var-wrapper nodes for go-to-definition)
+- Concrete modules, handlers, cache design, and integration details
+- A **dedicated subsection** for the example language server: introduce it as an external consumer of the library (not part of the library), explain what extra pieces it adds (parser, type classes for a concrete language, `main`), then describe the integration at a high level
+
+## Examples from Flan
+
+When illustrating library usage, mine `flan-language-server/src/LanguageServer/AgnosticLanguageServerFlan.hs` for patterns, but **do not quote or walk through the full Flan implementation** in the main implementation narrative. Instead (see also **Snippet size and exposition** above):
+
+- Distill **minimal, self-contained snippets** that show one idea at a time (e.g. a `LSConfiguration` record, one type-class instance, one handler wiring step)
+- Simplify names and trim unrelated boilerplate where it aids clarity
+- Reserve the full Flan walkthrough for the example subsection; even there, prefer selective excerpts over large contiguous blocks
+
+Keep methodology and implementation distinct: Chapter 3 explores *what could be done and why*; Chapter 4 documents *what was built and how*.

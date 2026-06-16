@@ -1,4 +1,196 @@
 \chapter{Evaluation and Discussion}
 \label{chap:eval}
 
-\ldots
+This chapter assesses the agnostic language server framework against the evaluation criteria established in Section~\ref{subsec:evaluation_criteria}, analyzes the automation it delivers and the computational cost of its algorithms, and identifies current limitations together with directions for future work.
+
+\section{Evaluation against Design Criteria}
+\label{sec:eval_criteria}
+
+\subsection{Feature Completeness}
+
+The framework supports all six features from the criterion: go-to-definition, symbol renaming, hover messages, diagnostics, type checking, and syntax highlighting (Table~\ref{tab:ls_features}).
+Each is activated by the corresponding type class instances.
+The Flan language server exercises all six simultaneously: go-to-definition and rename resolve variable uses to their introducing binders; hover messages display inferred types; diagnostics surface type errors and unbound symbols; semantic tokens drive syntax highlighting in VS Code.
+
+\subsection{Minimal Entry Threshold}
+
+Every type class method carries a default returning a neutral value, so the only strictly mandatory inputs are \texttt{fileExtension} and \texttt{buildAsts} in \texttt{LSConfiguration}.
+Features degrade gracefully: supplying only \texttt{RangedSig} and \texttt{FoldablePat} immediately enables go-to-definition and rename; each subsequent pair of instances adds the next feature without touching what is already working.
+The type-checking classes are a partial exception: because they are parameterized over a user-supplied type \texttt{ty} the library cannot default, omitting them simply means no type-checking support, and all other features are unaffected.
+
+\subsection{Correctness}
+
+Scope-tracking correctness rests on two mechanisms.
+Free Foil's phantom type parameter \texttt{n~::~S} makes scope violations a compile-time error: a \texttt{Name n} cannot be compared against a \texttt{Scope m} for a different \texttt{m}, so the server inherits these guarantees for free.
+The parallel-scope collision problem, in which sibling \texttt{ScopedAST} branches independently produce names with the same integer identity, is resolved by the position-based validity predicate in \texttt{findDefinition}: because source ranges are non-overlapping, at most one sibling covers the cursor, and only that branch is accepted.
+This scope-level correctness is what Free Foil enforces by construction; resolving a name to its definition additionally relies on the structural contracts of Sections~\ref{subsec:agnostic_traversal} and~\ref{chap:impl}, namely var-wrapper nodes around variable occurrences and single-binder-per-level patterns, which the library cannot verify and which the integrator must honor for go-to-definition, rename, and variable hover to function.
+
+\subsection{Language Agnosticism}
+
+Two language servers were built on the library without modifying any core module: LambdaPi (a dependently typed lambda calculus with $\Pi$-types) and Flan (a functional language with let-bindings, pair patterns, and conditionals).
+Their signature constructors, binder types, parsers, and type systems share no code; the integration surface in each case consists only of type class instances and the two \texttt{LSConfiguration} fields.
+
+\subsection{Worst-Case Complexity}
+
+The criterion requires every server operation to run in at most linear time in the AST size ($O(K)$).
+This is satisfied: the analysis of Section~\ref{sec:complexity} shows that every handler is bounded by $O(K)$, and the library introduces no super-linear step of its own.
+
+Several operations do better than this worst case, which is a welcome bonus rather than a requirement.
+Position-only queries, hover and go-to-definition, descend a single root-to-target path instead of the whole tree, so for fixed-arity grammars they run in $O(L)$ in the tree depth (Section~\ref{sec:complexity}); since $L \leq K$, and substantially so for shallow, wide trees, this is a real improvement where it applies.
+
+As subjective corroboration, timing via VS Code's LSP debug log shows individual handler responses in the range of 10 ms on sample Flan programs, which is fast enough to feel instantaneous in the editor.
+This is not a controlled benchmark, but together with the complexity bounds it indicates that the resulting performance is comfortably adequate for the framework's intended use; a systematic empirical characterization across controlled file sizes is left as future work.
+
+\subsection{VS Code Integration}
+
+The criterion is satisfied by the Flan extension described in Section~\ref{chap:impl}: a thin wrapper that registers the compiled server binary for \texttt{.flan} files and forwards all LSP traffic to it.
+Go-to-definition, rename, hover tooltips, squiggly-line diagnostics, and semantic-token highlighting are all accessible through VS Code's standard interface without additional configuration.
+
+\section{Automation Analysis}
+\label{sec:automation}
+
+A natural measure of the automation a framework delivers is the number of user-defined functions required to activate a given feature.
+The fewer functions a feature demands, the more of its implementation the library has absorbed.
+These functions can be classified by what they operate on:
+
+\begin{itemize}
+  \item functions on \texttt{sig}, concerned with the language's signature constructors;
+  \item functions on \texttt{binder}, concerned with the language's binder patterns;
+  \item functions concerned with neither.
+\end{itemize}
+
+Because the library's automation is achieved by internalizing operations on the Free Foil AST, the number of user functions in the third category directly indicates how much tree-traversal and scope-management work has been absorbed into the library.
+
+Table~\ref{tab:automation} lists the type class methods a user must provide to activate each feature, counting only new methods each feature adds in an incremental activation order.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\hline
+\textbf{Feature} & \textbf{Methods to implement} & \textbf{New} \\
+\hline
+Minimal server (no features) & \texttt{buildAsts} & 1 \\
+Go-to-definition & \texttt{range}, \texttt{foldrPat}, \texttt{rangePat}, \texttt{binderOf} & 4 \\
+Rename & (same as go-to-definition) & 0 \\
+Hover & \texttt{hoverData}, \texttt{hoverDataPat} & 2 \\
+Diagnostics & \texttt{diagnose}, \texttt{diagnosePat} & 2 \\
+Highlighting & \texttt{tokenize}, \texttt{tokenizePat} & 2 \\
+Type checking & \texttt{deduceType}, \texttt{ty}, \texttt{patTy}, \texttt{addPattern} & 4 \\
+\hline
+\textbf{Total} & & \textbf{15} \\
+\hline
+\end{tabular}
+\caption{User-defined functions required per feature, with incremental new additions.}
+\label{tab:automation}
+\end{table}
+
+Activating all supported features requires 15 user-defined functions.
+Fourteen of these are type class methods operating on \texttt{sig} or \texttt{binder}; only \texttt{buildAsts} involves neither.
+This single exception implements the language-specific parsing and AST construction step, which is irreducibly language-specific and cannot be automated away.
+All tree traversal, scope extension, name-membership testing, and handler wiring is handled by the library without user involvement.
+The fact that only one function sits outside the sig/binder category confirms a high level of automation.
+
+This count measures the framework's integration surface, the number of distinct extension points a language author must fill, rather than implementation effort.
+Two of these inputs, \texttt{buildAsts} and \texttt{deduceType}, concentrate the genuinely language-specific complexity, parsing and the type system respectively, and may each be substantial; the remaining methods are typically small accessors over the signature.
+The metric therefore reflects how much tree-traversal and scope-management work the library absorbs, which is precisely the automation being claimed, and not the total effort of integrating a language.
+
+Two further observations follow from Table~\ref{tab:automation}.
+First, the four methods of \texttt{RangedSig} and \texttt{FoldablePat} together unlock two non-trivial LSP features, go-to-definition and rename, simultaneously.
+Both features share the same traversal and name-resolution primitives, so implementing them once suffices for both.
+This pair is the most automation-efficient entry point for a language integrator seeking immediate IDE functionality.
+
+Second, type checking has the highest incremental cost, four methods that cannot be defaulted, but also the feature that most directly benefits from Free Foil's scope-tracking infrastructure.
+The user supplies only the language-specific deduction rules via \texttt{deduceType}; the library provides the recursive descent, the name map, and the continuation-passing interface.
+
+\section{Complexity Analysis}
+\label{sec:complexity}
+
+Let \texttt{K} denote the total number of nodes in the AST and \texttt{L} the length of a root-to-target path (at most the tree depth, so \texttt{L} $\leq$ \texttt{K}).
+Each operation visits every node at most a constant number of times, so all server operations are $O(K)$ in the worst case; for the whole-tree operations, namely type checking, diagnostics, highlighting, and reference collection during rename, this is also tight, since each must inspect every node to produce its result.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llp{0.42\linewidth}@{}}
+\hline
+\textbf{Operation} & \textbf{Worst-case} & \textbf{Dominant step} \\
+\hline
+AST construction & $O(K)$ & User-supplied; linear parse assumed \\
+Go-to-definition & $O(K)$ & Narrowest-node search + binder search ($O(L)$ with pruning) \\
+Rename & $O(K)$ & Reference collection after the binder search \\
+Type checking & $O(K)$ & Single-pass \texttt{bimap} descent \\
+Hover & $O(K)$ & Narrowest-node search only ($O(L)$ with pruning) \\
+Diagnostics & $O(K)$ & Full tree walk \\
+Highlighting & $O(K)$ & Full tree walk \\
+\hline
+\end{tabular}
+\caption{Worst-case time complexity of each server operation.}
+\label{tab:complexity}
+\end{table}
+
+Position-based queries, hover and go-to-definition, usually do better than this worst case.
+Since each node carries a source range and sibling ranges do not overlap, the search descends only into the child covering the cursor and prunes the rest, following one root-to-target path of length \texttt{L} ($\ll$ \texttt{K} for shallow or balanced trees).
+The per-step work is the number of children examined; for a fixed, non-variadic signature this is a grammar constant, so each step is $O(1)$ and the query is $O(L)$.
+The sole exception is a variadic, list-valued constructor with $\Theta(K)$ children, where scanning them is linear and the query falls back to $O(K)$.
+Fixed-arity grammars such as Flan never trigger this; a list of top-level declarations is handled outside the tree as separate ASTs.
+
+Such a variadic node could be re-encoded as a nested, cons-like chain, restoring bounded arity by construction and making the bound hold unconditionally in the encoded depth $L'$.
+This does not reduce the work: locating one child among $N$ still costs $\Theta(N)$, and the chain has depth $N$, so $L' \geq L$, but it shows the $O(K)$ case is a matter of representation, not an algorithmic limit. 
+A genuinely sub-linear scan would instead index the children by range, as noted under future work in Section~\ref{sec:limitations}.
+
+The linear bound for type checking, diagnostics, and highlighting assumes that the user-supplied type class methods operate in $O(1)$ per node.
+If a user's \texttt{deduceType} or \texttt{diagnose} implementation performs additional work, for example resolving overloaded names by consulting a separate data structure, the effective per-node cost rises accordingly.
+The library itself does not introduce super-linear behavior.
+
+Semantic tokens have an additional ordering requirement: the LSP wire format encodes positions as deltas, so any token whose start position precedes the end of the previous token in the list is silently dropped.
+The \texttt{bimap}-based token collection delegates ordering to the user's \texttt{tokenize} implementation, keeping the algorithm at $O(K)$.
+The alternative, collecting all tokens and sorting by position, would cost $O(K \log K)$.
+
+\section{Limitations and Future Work}
+\label{sec:limitations}
+
+The following limitations are present in the current implementation.
+
+\paragraph{Single-file scope.}
+The library does not model a global or cross-file namespace.
+Go-to-definition and rename operate within the ASTs of a single file; if the target name is introduced in a different file, the query terminates without result.
+This is a property of the current implementation rather than of the \texttt{S}-indexed representation, which can encode such structure, for example a global scope or an import as a synthetic binder that extends the scope with the relevant names.
+The missing piece is the resolution and dependency machinery: supporting cross-file references would require a dependency graph over files and a mechanism for resolving names across file boundaries, both of which the integrator must supply by hand.
+
+\paragraph{No dependency graph for cache invalidation.}
+The cache is rebuilt for all files in the workspace whenever any watched file changes.
+For large workspaces this is wasteful.
+A file-level dependency graph would allow the server to rebuild only files affected by a given edit, and would also make cyclic imports detectable, which is useful for any language that forbids them.
+
+\paragraph{Type inference limitations.}
+The bidirectional type-checking interface propagates a single expected type downward from parent to child and reads a single inferred type upward.
+This covers straightforward bidirectional checking but does not support constraint-based inference, where type constraints are collected during a first pass and unified in a second.
+Languages whose type inference relies on unification, such as Haskell or ML, cannot be accommodated without extending the framework.
+A related limitation is that binder types are currently sourced exclusively from the annotation stored in the pattern via \texttt{patTy}.
+Languages in which binder types are optional and inferred from usage, as in \texttt{let x = expr}, require a richer inference mechanism.
+
+\paragraph{Incremental type checking.}
+The type-checking pass currently re-checks the entire AST whenever a file changes.
+An incremental approach that re-checks only subtrees affected by the edit would reduce diagnostic latency for large files, and is a natural complement to the debounce mechanism already in place.
+
+\paragraph{Search complexity improvement.}
+Position-based node lookup currently descends the relevant subtree along a single path, $O(L)$ for fixed-arity grammars.
+Indexing nodes by their source ranges in an interval map would reduce this to $O(\log K)$ for typical trees, at the cost of maintaining the map across edits.
+Similarly, a single combined traversal, descending toward the target node while simultaneously tracking candidate binders on the way back up, would replace the two separate $O(L)$ passes currently used by go-to-definition.
+
+\paragraph{Default and complementary highlighting.}
+Semantic-token highlighting currently requires explicit \texttt{TokenizableSig} and \texttt{TokenizablePat} implementations.
+Two improvements could lower this barrier.
+
+First, the library could provide a default semantic highlighting pass: given \texttt{RangedSig} and \texttt{FoldablePat} instances, which many users already provide for go-to-definition and rename, it could assign a generic token type to all variable occurrences and binder patterns without further user input, yielding a useful baseline for free.
+
+Second, semantic tokens and TextMate grammar highlighting are complementary.
+A TextMate grammar is a set of regular expressions that the editor applies directly to the raw source text, without invoking the language server at all.
+Because it operates on text rather than a parsed AST, it is available immediately on file open, before the server has finished building the AST, and it works even when the file contains syntax errors that prevent parsing.
+Pairing a lightweight TextMate grammar (covering keywords, comments, and literals) with the server's semantic tokens (covering variable and binder roles) would therefore give richer highlighting than either approach alone while keeping the server's responsibility limited to what only a parsed AST can provide.
+
+\paragraph{Pattern structure constraint.}
+The framework requires that binder patterns follow a chained structure: a pattern binding $n$ names must be represented as $n$ levels of \texttt{FoldablePat} nodes, each contributing exactly one \texttt{NameBinder}.
+Patterns that store multiple names in a flat constructor are incompatible with \texttt{FoldablePat}, and go-to-definition, rename, and hover for those pattern-bound names will be non-functional.
+This structural requirement is a consequence of Free Foil's type-level scope indexing and cannot be relaxed without changing the underlying representation.

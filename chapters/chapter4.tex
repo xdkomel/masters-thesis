@@ -9,16 +9,61 @@ The library defines a finite amount of events which can be triggered by a notifi
 The project uses the following handler-functions:
 
 \begin{itemize}
-\item \texttt{Initialized} is triggered on the language server initialization
-\item \texttt{WorkspaceDidChangeWatchedFiles} is triggered when files that are currently in focus in the editor change
-\item \texttt{TextDocumentDefinition} is triggered when the user requests to navigate to a definition of a given symbol
-\item \texttt{TextDocumentRename} is triggered when the user points at a symbol and wishes to rename it
+\item \texttt{Initialized} is triggered on language server initialization; it builds the initial AST cache for all files in the workspace and publishes diagnostics.
+\item \texttt{TextDocumentDidOpen} is triggered when a file is opened in the editor; it publishes diagnostics for the newly opened file.
+\item \texttt{TextDocumentDidChange} is triggered on every in-editor edit; it rebuilds the AST for the changed file using a debounced timer and publishes updated diagnostics.
+\item \texttt{WorkspaceDidChangeWatchedFiles} is triggered when watched files on disk change; it rebuilds the full workspace cache and republishes diagnostics for every file.
+\item \texttt{TextDocumentDefinition} is triggered when the user requests navigation to the definition of a symbol under the cursor.
+\item \texttt{TextDocumentRename} is triggered when the user initiates a rename operation on a symbol.
+\item \texttt{TextDocumentSemanticTokensFull} is triggered when the editor requests semantic highlighting tokens for an entire file.
+\item \texttt{TextDocumentHover} is triggered when the user hovers over a symbol and requests contextual information such as an inferred type.
 \end{itemize}
+
+\subsection{Language Server Configuration}
+
+The library's public entry point is \texttt{runLanguageServer}, which accepts a single value of type \texttt{LSConfiguration}:
+
+\begin{minted}[breaklines=true]{haskell}
+data LSConfiguration binder sig = LSConfiguration
+  { fileExtension :: String
+  , buildAsts :: String -> [SomeScopeWithAST binder sig]
+  }
+\end{minted}
+
+These two fields are the only strictly mandatory inputs.
+\texttt{fileExtension} names the file extension whose files the server should watch (e.g.\ \texttt{"flan"}), and \texttt{buildAsts} converts raw file text into a list of scope-rooted ASTs, one per top-level declaration or independent scope root.
+
+The remainder of the feature set is controlled entirely by type class instances on \texttt{binder} and \texttt{sig}.
+Most classes carry a default no-op implementation, so an integrator can enable features incrementally by providing non-trivial instances.
+The type-checking classes, \texttt{TypeDeductiveSig}, \texttt{TypedSig}, and \texttt{TypedPat}, are an exception: because they are parameterized over an unknown type \texttt{ty} that the library cannot infer or default, they require a complete user-supplied implementation.
+Table~\ref{tab:ls_features} summarizes which instances unlock which editor features.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Instance(s)} & \textbf{Editor feature} \\
+\hline
+\texttt{RangedSig}, \texttt{FoldablePat} & Go-to-definition, rename \\
+\texttt{TypeDeductiveSig}, \texttt{TypedSig}, \texttt{TypedPat} & Type checking \\
+\texttt{HoverableSig}, \texttt{HoverablePat} & Hover messages \\
+\texttt{DiagnosableSig}, \texttt{DiagnosablePat} & Diagnostic messages \\
+\texttt{TokenizableSig}, \texttt{TokenizablePat} & Semantic token highlighting \\
+\hline
+\end{tabular}
+\caption{Type class instances and the LSP features they enable.}
+\label{tab:ls_features}
+\end{table}
+
+The \texttt{Bifunctor} and \texttt{Bifoldable} instances are structural requirements inherited from Free Foil and are not specific to any language server feature.
+\texttt{F.CoSinkable} is likewise a Free Foil constraint on the binder type required for scope extension during name traversal.
 
 \subsection{Building a Tree}
 
-The \texttt{LSP.Server.Core} module provides a function fetching the root path of a project.
-Then by using \texttt{globDir} defined in \texttt{System.FilePath.Glob.Directory} module it is possible to filter out files with the extension related to the given language and by using \texttt{FunBuildASTs} produce ASTs for each file.
+The \texttt{LSP.Server.Core} module provides a function \texttt{getRootPath} fetching the root path of the current workspace.
+Using \texttt{globDir} from the \texttt{System.FilePath.Glob} module it is then possible to collect all files whose extension matches \texttt{fileExtension} from the \texttt{LSConfiguration}.
+The \texttt{buildAsts} field, also supplied by the user via \texttt{LSConfiguration}, converts each file's text content into a list of \texttt{SomeScopeWithAST} values, one per top-level declaration or independent scope root.
+The resulting pairs of file path and program store are inserted into the cache.
 
 \section{Caching}
 
@@ -27,144 +72,178 @@ Every watched files change triggers ASTs rebuild.
 
 The cache is defined as a separate module independent of Free Foil which is deliberately done to foster modular design and future extensibility to adapt caching to more complex scenarios.
 Caching is implemented using Software Transactional Memory (STM) \footnote{\url{https://hackage.haskell.org/package/stm}}.
-The program's environment stores a mutable variable \texttt{LangStore ast} parametrized by the final AST type—\texttt{SomeScopedAST binder sig} in the current implementation.
+The program's environment stores a mutable variable \texttt{LangStore ast} parametrized by the final AST type, \texttt{SomeScopedAST binder sig} in the current implementation.
 \texttt{LangStore} stores a \texttt{Map} connecting \texttt{FilePath}s to \texttt{LangProgramStore}s, each, essentially, storing the list of ASTs:
 
 \begin{minted}[breaklines=true]{haskell}
-newtype LangProgramStore ast = LangProgramStore 
-  { langAst :: [ast] 
+newtype LangProgramStore ast = LangProgramStore
+  { langAst :: [ast]
   }
-
 newtype LangStore ast
-  = LangStore (Map FilePath (LangProgramStore ast)) 
-
-newtype LangEnv ast = LangEnv
+  = LangStore (Map FilePath (LangProgramStore ast))
+data LangEnv ast = LangEnv
   { store :: TVar (LangStore ast)
+  , debounceTimers :: TVar (Map Uri ThreadId)
+  , lspEnvRef
+      :: IORef (Maybe (LanguageContextEnv ()))
   }
 \end{minted}
 
-The caching module implements two functions reading and writing to the environment as well as the \texttt{LSP} parametrizing the \texttt{LspT}.
+The \texttt{store} field holds the cached ASTs protected by an STM transactional variable.
+The \texttt{debounceTimers} field maps each open document URI to the \texttt{ThreadId} of a pending rebuild timer, allowing the server to cancel a superseded rebuild when the user types again before the delay expires.
+The \texttt{lspEnvRef} field stores the LSP server environment as an \texttt{IORef} so that the debounce thread, which runs outside the \texttt{LSP} monad, can access it to push diagnostics after the rebuild completes.
+
+\paragraph{Why \texttt{IORef (Maybe \ldots)} is necessary.}
+The \texttt{runServer} callback accepts a \texttt{ServerDefinition} whose \texttt{staticHandlers} field is evaluated before the LSP handshake takes place.
+The \texttt{LanguageContextEnv}, the value needed to run \texttt{runLspT} and send notifications, is only produced inside the \texttt{doInitialize} callback, which fires after the client's \texttt{initialize} request arrives.
+The debounce thread, however, is spawned from a handler that was registered earlier, so there is a window during which the thread could in principle execute before \texttt{doInitialize} has stored the environment.
+Using a plain \texttt{IORef} containing the fully-initialized value would require the environment to exist at construction time, creating a chicken-and-egg dependency.
+\texttt{IORef (Maybe (LanguageContextEnv ()))} resolves this: the reference is initialized to \texttt{Nothing}, then atomically overwritten with \texttt{Just env} inside \texttt{doInitialize}.
+The debounce thread reads the reference and exits silently when it finds \texttt{Nothing}, a case that is only possible during the brief initialization window, and proceeds normally once \texttt{Just env} is available.
+
+The \texttt{handleDidChange} handler therefore does not rebuild the cache immediately.
+Instead, it calls \texttt{debounceRediagnose}: any existing timer for the document is cancelled, and a new thread is spawned that waits 500 milliseconds before rebuilding the AST, publishing diagnostics, and requesting a semantic-token refresh.
+This prevents redundant rebuilds on every keystroke while keeping the IDE's feedback responsive.
+
+The caching module also defines the \texttt{LSP} monad alias used throughout the server:
 
 \begin{minted}[breaklines=true]{haskell}
 type LSP ast = LspT () (ReaderT (LangEnv ast) IO)
 \end{minted}
 
-\section{Connecting Families}
+\subsection{Name Collisions}
 
-Whether it is finding a symbol's definition or tracing a symbols usage, a \texttt{Family} must be built first, as described in the \ref{section:tracing_a_name}.
-A function dedicated to building a family with respect to a given \texttt{Name} follows:
-
-\begin{minted}[breaklines=true]{haskell}
-nameFamily :: Distinct n
-  => FunExtractName binder sig
-  -> SomeName binder sig 
-  -> Scope n
-  -> TermTelescope binder sig n
-  -> Maybe (Family binder sig)
-\end{minted}
-
-Since \texttt{NodeTerm}s contain a \texttt{CoSinkable binder}, the scope can be dragged all the way through the \texttt{TermTelescope}'s structure until a binder injecting the queried name is found. 
-If the binder is not adding the name, its child carries on the search, and later—siblings.
-Technically, it is simply a Depth First Search (DFS) algorithm.
-Once the parent—a node establishing the given name—is found, scope-management is still required to produce the \texttt{SomeScopedAST} from the \texttt{LeafNode}.
-If the Free Foil AST was built correctly, succeeding \texttt{TermTelescope}s will introduce names distinct from the queried, thus, additional checks on the name-in-scope membership after finding the parent are not required.
-
-\subsection{Names Collisions}
-
-The possibility of multiple alternative scope extensions as discussed in the \ref{section:tracing_a_name} means multiple \texttt{TermTelescope}s can be produced for a single expression. 
-However, it also means the Foil \texttt{NameBinder} operating with an integers set under the hood is going to extend the scope identically for every AST branch.
-As depicted in the example, a Haskell tuple of three lambdas extends the \texttt{Scope n} three times introducing three \texttt{Name}s all parametrized by a different type parameter, while under the hood all three equal to the same integer value, which also means all three integer sets representing \texttt{Scope l1}, \texttt{Scope l2}, and \texttt{Scope l3} are equal.
+The definition-search algorithm described in Section~\ref{section:name_definition_and_references} uses \texttt{extendScopePattern} to grow the running scope as it crosses each binder, and checks name membership to detect when a binder introduces the target name.
+A subtle issue arises when two or more \texttt{ScopedAST} children of the same \texttt{Node} are siblings, that is, when the signature contains parallel scoped branches.
+Because each branch starts from the same parent scope and Foil's \texttt{withFresh} picks the next integer past the current maximum, both branches independently extend the scope by the same integer:
 
 \begin{minted}[breaklines=true]{haskell}
-myFunction = -- Scope n
-  ( \x -> doSmth1 x -- Scope l1
-  , \y -> doSmth2 y -- Scope l2
-  , \x -> doSmth3 x -- Scope l3
+myFunction = -- Scope n  (e.g. {})
+  ( \x -> doSmth1 x  -- Scope l1 = {0}
+  , \y -> doSmth2 y  -- Scope l2 = {0}
+  , \x -> doSmth3 x  -- Scope l3 = {0}
   )
 \end{minted}
 
-In practice, for the above example the \texttt{nameFamily} is going to falsely pick the first \texttt{NodeTerm} introducing the given \texttt{Name} resulting in 33\% success rate.
-Comparing raw \texttt{String} names injected in each node would still confuse the first and third branches, so it's not a solution either.
+All three binders produce integer identity 0; the scopes \texttt{l1}, \texttt{l2}, and \texttt{l3} are equal as integer sets.
+Without further information, \texttt{findDefinition'} using \texttt{bifoldr} would return the first sibling that passes the membership check, which may not be the one containing the cursor.
+Comparing the raw source names stored in the AST would still confuse the first and third branches (both named \texttt{x}), so that is not a solution either.
 
-The simplest solution is to check whether a given subtree contains the required \texttt{Var}. 
-Since the language server requires all symbols to be locatable to use the \texttt{FunFindNarrowest}, the queried name must be present in the given subtree.
-From the user's perspective, the AST may be traversed several time for each option leading to the $O(n^2)$ algorithm complexity in the worst case scenario.
-Yet if the user's implementation can cut off searches that for sure do not lead to a given position, the algorithm completes in $O(n)$ even in the worst case.
+The chosen approach is to thread a validity predicate through \texttt{findDefinition'}.
+When the definition search encounters a candidate \texttt{ScopedAST binder body}, it applies the predicate to the node that encloses it before accepting the result.
+For go-to-definition and rename, the predicate is \texttt{nodeCovers pos}: a candidate is valid only if its surrounding signature node's source range contains the cursor position \texttt{pos}.
+Since \texttt{findNarrowest} has already established that the cursor falls inside the var-wrapper being queried, and since non-overlapping source ranges ensure that at most one of the parallel branches can contain the cursor, the predicate admits exactly the correct branch.
+No extra traversal or subtree search is required; the same single pass that searches for the binder simultaneously discards the wrong siblings.
 
-An alternative solution is radical as it implies to adapt the internal Foil machinery to the following case.
-The \texttt{Scope} can possibly exclude some \texttt{Name}s from itself marking them as ``taken''.
-It must not even be an additional integer set but rather an offset representing how much names were scoped in the preceding cases of Free Foil AST creation.
-In a signature with pairs, the modification would mean building the \texttt{Pair} node required converting cases one by one, which makes each case in the node implicitly dependant on the scopes of other alternative cases.
-That makes it impossible to parallelize the conversion of a concrete syntax tree to the abstract representation.
+An alternative that was considered but not adopted is to make name generation aware of parallel branches during AST construction.
+A customized scope type \texttt{OffsetScope} could carry an integer offset representing how many names have already been allocated by preceding sibling branches, producing globally distinct integers:
 
 \begin{minted}[breaklines=true]{haskell}
 toAst :: Distinct n
-  => OffsetScope n 
-  -> Map String (Name n) 
-  -> RawTerm 
+  => OffsetScope n
+  -> Map String (Name n)
+  -> RawTerm
   -> (MyAst n, Int)
 toAst scope env = \case
-  ... -- Other AST to Foil AST converting cases
-  RawPair l r -> 
+  RawPair l r ->
     let (astL, lShift) = toAst scope env l
-        (astR, rShift) = toAst (shiftScope scope lShift) env r
+        (astR, rShift) =
+          toAst (shiftScope scope lShift) env r
     in (Node (Pair astL astR), rShift)
 \end{minted}
 
-This sophisticated scope management can be applied only when building the AST. The \texttt{ShiftScope} assumed to be the default Foil \texttt{Scope} with an additional integer used in the customized version of \texttt{rawFreshName}.
-
-\begin{minted}[breaklines=true]{haskell}
-rawFreshName scope offset = if IntSet.null scope 
-  then offset 
-  else offset + 1 + (IntSet.findMax scope)
-\end{minted}
-
-Hence, if the scope was managed correctly using shifts, the final tree will have no name collisions.
+This approach eliminates collisions at the source but introduces a coupling between sibling branches: each branch's scope depends on the names allocated by all preceding siblings, which prevents independent (or parallel) construction of the child nodes.
+It also requires replacing Foil's standard \texttt{withFresh} with a custom variant throughout the user's AST builder.
+The position-based predicate approach requires no modifications to either the library or the user's AST construction code, keeping the integration surface small.
 
 \section{Example Project}
 
-I tested the implementation of the agnostic language server by applying it to two toy programming languages—LambdaPi and FLAN (meaning Functional LANguage).
-Flan was required to test type checking and more complex name tracing algorithms.
+The agnostic language server was tested by integrating it with two toy programming languages: LambdaPi, a dependently typed lambda calculus with $\Pi$-types, and Flan (Functional LANguage).
+Flan exercises the full feature set of the library: type checking, diagnostics, hover messages, semantic highlighting, go-to-definition, and rename.
+It is the primary integration example.
 
-\subsection{Grammar and Signature}
+\subsection{Signature and Annotations}
 
-Flan is a strictly typed functional programming language with the following signature:
+Flan is a strictly typed functional programming language with lambda abstraction, let-bindings, pairs, conditionals, and integer, string, and boolean literals.
+Its signature has two annotation type parameters: \texttt{a} for source positions and \texttt{a'} for node-level derived data:
 
 \begin{minted}[breaklines=true]{haskell}
-data FlanType a
-  = IntType a
-  | StrType a
-  | BoolType a
-  | FunType a (FlanType a) (FlanType a) 
-  | PairType a (FlanType a) (FlanType a)
-  | UnknownType a String
-
-data FlanPattern a 
-  = PatternWildcard a
-  | PatternVar a String
-  | PatternPair a (FlanPattern a) (FlanPattern a)
-
-data FlanF a s t 
-  = VarF a t String
-  | AppF a t t
-  | LamF a (FlanPattern a) (PatternType a) s
-  | LetF a (FlanPattern a) (PatternType a) t s
-  | PairF a t t
-  | IfF a t t t
-  | ConstF a FlanConst
-  | ErrorF a String
+data FlanF a a' s t
+  = VarF a a' t String
+  | AppF a a' t t
+  | LamF (LamAnn a) a' s
+  | LetF (LetAnn a) a' s s
+  | PairF (PairAnn a) a' t t
+  | IfF (IfAnn a) a' t t t
+  | ConstF a a' FlanConst
+  | ErrorF a a' String
 \end{minted}
 
-Every expression is parametrized by an annotation. 
-Initially, it only stores raw BNFC location of a given node.
-Later, annotations can be used to match types during type checking.
+The \texttt{a} parameter (a BNFC source position) is present on every constructor; for nodes that carry multiple keywords, such as \texttt{LamF}, which has a lambda token and a return-type annotation token, a dedicated record (\texttt{LamAnn}, \texttt{LetAnn}, etc.) groups the per-keyword positions.
+The \texttt{a'} parameter is the node annotation used for derived information.
 
-Instead of the default \texttt{NameBinder}, Flan's AST uses \texttt{NameBinders} as the \texttt{binder}. 
-Free Foil provides a mechanism to bind zero or many names for one node, thus, allowing to bind patterns of any complexity easily. 
+AST construction proceeds in two phases.
+In the first phase both parameters are instantiated with the raw source position type \texttt{PosAnn}, yielding \texttt{FlanF PosAnn PosAnn}.
+In the second phase the type-checker replaces \texttt{a'} with \texttt{NodeAnn}:
+
+\begin{minted}[breaklines=true]{haskell}
+data NodeAnn
+  = NodeAnn (Maybe (Int, Int)) FlanType' [String]
+\end{minted}
+
+\texttt{NodeAnn} stores the node's end position (used to construct a \texttt{Range} together with the start position in \texttt{a}), its inferred type, and any type-error messages accumulated during type checking.
+The final AST has type \texttt{FlanF PosAnn NodeAnn} and carries both positional and type information without requiring a separate pass.
+
+Flan's binder is \texttt{FlanPattern}, a recursive algebraic type that supports wildcard, variable, and pair patterns.
+Free Foil's \texttt{CoSinkable} typeclass is derived for it, and the library's pattern-binding machinery allows binding zero, one, or several names in a single node without any changes to the core server.
+
+\begin{minted}[breaklines=true]{haskell}
+data FlanPattern a ty (n :: S) (l :: S) where
+  PatternWildcard :: a -> a -> ty
+    -> FlanPattern a ty n n
+  PatternVar :: a -> a -> ty -> String
+    -> NameBinder n l -> FlanPattern a ty n l
+  PatternPair :: PatternPairAnn a -> a -> ty
+    -> FlanPattern a ty n i
+    -> FlanPattern a ty i l
+    -> FlanPattern a ty n l
+\end{minted}
+
+\paragraph{Framework requirements on user-defined types.}
+These two definitions satisfy the two structural requirements the framework imposes on user-defined AST types.
+\texttt{VarF} serves as the var-wrapper: it is a \texttt{Node} constructor whose single plain child is a variable occurrence, giving the server a range-bearing handle on every name use in the source.
+\texttt{PatternPair} chains its two sub-patterns through an intermediate scope \texttt{i} rather than storing two binders in a single flat constructor.
+This ensures that \texttt{binderOf} can return a single \texttt{NameBinder} at each level and that \texttt{foldrPat} can walk the pattern recursively, extracting one name per step.
+A language implementation that represents variable occurrences as bare \texttt{Var} nodes, or that stores multiple binders side-by-side in a single flat pattern constructor, cannot satisfy the \texttt{FoldablePat} and \texttt{RangedSig} contracts; go-to-definition, hover look-up, and rename will be non-functional for those constructs.
+
+\subsection{Type Class Instances}
+
+To activate the full feature set, the Flan integration implements the following type class instances defined by the library:
+
+\begin{itemize}
+\item \texttt{RangedSig (FlanF PosAnn NodeAnn)} and\\
+\texttt{FoldablePat (FlanPattern PosAnn FlanType')}, required for\\
+go-to-definition and rename; they supply source ranges for nodes and binders.
+\item \texttt{TypeDeductiveSig}, \texttt{TypedSig}, and \texttt{TypedPat} together describe the bidirectional type-checking rules used to populate \texttt{NodeAnn} with the inferred type.
+\item \texttt{DiagnosableSig} and \texttt{DiagnosablePat} collect type errors and unbound-symbol errors stored in \texttt{NodeAnn} into LSP \texttt{Diagnostic} values.
+\item \texttt{HoverableSig} and \texttt{HoverablePat} construct hover content from the inferred type and error messages stored in each node's \texttt{NodeAnn}.
+\item \texttt{TokenizableSig} and \texttt{TokenizablePat} produce a list of \texttt{SemanticTokenAbsolute} values, assigning token types (variable, function, keyword, number, string) to each sub-expression and keyword token.
+\end{itemize}
+
+The entry point wires everything together via \texttt{LSConfiguration}:
+
+\begin{minted}[breaklines=true]{haskell}
+runFlanLS :: IO ()
+runFlanLS = runLanguageServer LSConfiguration
+  { fileExtension = "flan"
+  , buildAsts = buildAsts'
+  }
+\end{minted}
+
+where \texttt{buildAsts'} invokes the BNFC-generated lexer and parser, converts the concrete syntax tree to a Free-Foil AST using the position annotation, and then applies the type-checker to produce the fully-annotated \texttt{NodeAnn} tree.
 
 \subsection{Visual Studio Code Demo}
 
-I developed a simple VSCode demonstration project to test the compiled language server.
-With some \texttt{ALSConfiguration}, the program can be built as an executable and hosted in a VSC extension.
-
-\ldots
+A minimal Visual Studio Code extension hosts the compiled Flan language server executable and registers it for \texttt{.flan} files.
+The extension requires no language-specific logic: it forwards all LSP traffic to the server process.
+Through this setup the extension demonstrates go-to-definition, rename, hover with inferred types, squiggly-line diagnostics for type errors and unbound symbols, and syntax highlighting driven by semantic tokens, all enabled by the type class instances above, with no additional hand-written IDE glue.

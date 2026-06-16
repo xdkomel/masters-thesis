@@ -12,7 +12,7 @@
 
 \usepackage{vmargin}
 \setpapersize{A4}
-\setmarginsrb{2.5cm}{2.2cm}{2.2cm}{2.2cm}{0pt}{10mm}{0pt}{13mm}
+\setmarginsrb{2.5cm}{2.0cm}{2.0cm}{2.0cm}{0pt}{10mm}{0pt}{13mm}
 \usepackage{setspace}
 \setstretch{1.5}
 \usepackage{indentfirst}
@@ -33,6 +33,9 @@
 \bibliography{ref.bib}
 \DefineBibliographyStrings{english}{%
   bibliography = {References},}
+\setcounter{biburlnumpenalty}{100}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{7000}
 \usepackage{blindtext}
 
 \usepackage{pdfpages}
@@ -59,7 +62,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=black, citecolor=black}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
 \usepackage{paralist}
 \usepackage{listings}
 \usepackage{zed-csp}
@@ -91,7 +94,6 @@
 
 % \setcounter{secnumdepth}{4}
 \captionsetup[table]{labelfont={normalfont}, name={TABLE}, labelsep={newline}}
-\setlength{\parindent}{2em} 
 \DeclareCaptionLabelSeparator{figSep}{.\quad}
 \captionsetup[figure]{labelfont={normalfont}, name={Fig.}, labelsep=period}
 \counterwithin{figure}{chapter}
@@ -131,34 +133,26 @@
 
 \begin{document}
 
-% \includepdf[pages=-]{title.pdf}
-% \tableofcontents
-% \listoftables
+\includepdf[pages=-]{title.pdf}
+\tableofcontents
+\listoftables
 % \listoffigures
 \newpage
 
 
-\include{chapters/abstract}
-\setcounter{page}{7}
-% set manually the number, from which Chapter 1 starts!
-% Why do we put 7 in this case?
-% Title page - page 1
-% Contents - page 2, page 3
-% List of tables - page 4
-% List of figures - page 5
-% Abstract - page 6
-% Chapter 1 - page 7
-% In your thesis the counter number can be different, please count carefully and insert the corresponding number.
-
-\include{chapters/chapter1}
-\include{chapters/chapter2}
-\include{chapters/chapter3}
-\include{chapters/chapter4}
-% \include{chapters/chapter5}
-% \include{chapters/chapter6}
+\input{chapters/abstract}
+\input{chapters/chapter1}
+\input{chapters/chapter2}
+\input{chapters/chapter3}
+\input{chapters/chapter4}
+\input{chapters/chapter5}
+\input{chapters/chapter6}
 
 
 %% REFERENCES
+\begingroup
+\sloppy
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
+\endgroup
 % \include{chapters/appex}
 \end{document}

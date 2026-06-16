@@ -1,0 +1,10 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{DiagnosableSig}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{diagnose}
+\PYG{+w}{    }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}
+\PYG{+w}{    }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{Diagnostic}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{diagnose}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{const}\PYG{+w}{ }\PYG{k+kt}{[]}
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{DiagnosablePat}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{diagnosePat}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{Diagnostic}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{diagnosePat}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{const}\PYG{+w}{ }\PYG{k+kt}{[]}
+\end{MintedVerbatim}

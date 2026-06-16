@@ -1,10 +1,9 @@
-\begin{abstract}
+\chapter*{Abstract}
 
-A language server is a crucial component of a modern development environment. 
-In this work I propose a framework for implementing a language server with minimal effort, minimizing code duplication. 
-The implementation relies heavily on Free-Foil, a library that uses Haskell's advanced type system to represent abstract syntax. 
-Free-Foil separates names and their occurrences from the language-specific signature, making most algorithms agnostic—independent of the target language. 
-The resulting language server stores the development environment's configuration, updates it on files changes, shows names' definitions, renames symbols, highlights syntax, performs type-checking, and displays diagnostic errors, warnings, and hover messages.
-It is possible to launch it in any development environment communicating via the Language Server Protocol.
-
-\end{abstract}
+Name capture during expression substitution remains a critical challenge in programming language implementation and formal verification.
+While the Free-Foil framework resolves this issue and automatically generates type-safe syntax, it currently lacks dedicated tooling for rapid IDE integration.
+To address this gap, I present a prototype of an agnostic language server built on Free-Foil that implements core Language Server Protocol (LSP) features: syntax highlighting, diagnostics, hover information, go-to-definition, renaming, and type checking, while requiring little effort from the language author.
+Each feature is enabled by implementing a small set of type classes over the language's signature and binders, which keeps tree traversal and scope management inside a reusable library.
+A worst-case analysis shows that every server algorithm runs in at most linear time relative to the syntax tree size.
+The work also identifies the limitations of the current implementation and directions for extending it.
+The prototype is well-suited for educational projects, language prototyping, and rapid integration of domain-specific languages into modern IDEs, with its source code and documentation providing a foundation for further research in automated development tooling.

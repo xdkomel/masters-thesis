@@ -1,0 +1,13 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{LangProgramStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangProgramStore}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{langAst}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{ast}\PYG{p}{]}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{k+kr}{newtype}\PYG{+w}{ }\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{n}{ast}
+\PYG{+w}{  }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Map}\PYG{+w}{ }\PYG{k+kt}{FilePath}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LangProgramStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{p}{))}
+\PYG{k+kr}{data}\PYG{+w}{ }\PYG{k+kt}{LangEnv}\PYG{+w}{ }\PYG{n}{ast}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{k+kt}{LangEnv}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{store}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{TVar}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LangStore}\PYG{+w}{ }\PYG{n}{ast}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{debounceTimers}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{TVar}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Map}\PYG{+w}{ }\PYG{k+kt}{Uri}\PYG{+w}{ }\PYG{k+kt}{ThreadId}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{lspEnvRef}
+\PYG{+w}{      }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{IORef}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{LanguageContextEnv}\PYG{+w}{ }\PYG{n+nb}{()}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

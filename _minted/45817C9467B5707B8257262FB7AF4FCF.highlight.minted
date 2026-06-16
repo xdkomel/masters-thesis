@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{class}\PYG{+w}{ }\PYG{k+kt}{RangedSig}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{k+kr}{where}
+\PYG{+w}{  }\PYG{n}{range}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{k+kt}{Range}
+\PYG{+w}{  }\PYG{n}{range}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n}{const}\PYG{+w}{ }\PYG{k+kt}{Nothing}
+\end{MintedVerbatim}

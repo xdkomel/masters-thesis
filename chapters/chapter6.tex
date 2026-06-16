@@ -1,4 +1,26 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-\ldots
+This thesis set out to carry Free Foil's compile-time scope safety across the LSP boundary into a single, configuration-driven language server, and the result demonstrates that this is achievable.
+By parameterizing the server over an opaque \texttt{binder} and bifunctor \texttt{sig} and expressing every operation in terms of \texttt{Bifoldable}, \texttt{Bifunctor}, and a small set of targeted type classes, the library absorbs all tree traversal, scope extension, and name resolution.
+A language integrator supplies 15 functions to activate the full feature set, only one of which, the irreducibly language-specific parser invoked by \texttt{buildAsts}, falls outside the \texttt{sig}/\texttt{binder} contract.
+Two unrelated languages, LambdaPi and Flan, were served without modifying any core module, confirming that the \texttt{binder}/\texttt{sig} parameterization achieves genuine language agnosticism.
+
+The approach inherits Free Foil's central strength: scope violations become compile-time type errors rather than latent runtime bugs.
+Using Haskell's type system to encode the in-scope set as a phantom kind, and using the host language to describe a target language's syntax through a second-order signature, turns a normally bespoke and error-prone layer into reusable, statically checked infrastructure.
+The automation and complexity analyses show that this comes at no asymptotic cost: every handler stays within $O(K)$ of the AST size, and go-to-definition and hover, which follow a single root-to-target path, drop to $O(L)$ in the tree depth for fixed-arity grammars.
+
+The framework also has clear boundaries, though they are better understood as what it provides out of the box than as hard limits of the underlying representation.
+The current server operates within a single file, models lexical binding, and performs bidirectional type checking rather than constraint-based unification.
+None of these are forced by Free Foil itself: because \texttt{S} is only a phantom tag on scopes and the binder is an ordinary type parameter, non-lexical structure can be encoded indirectly, for example as a global namespace as an outermost synthetic binder or as an import that extends the scope with the imported names.
+What Free Foil does not supply, unlike scope graphs, is the resolution and dependency machinery itself: visibility, shadowing, qualified lookup, and cross-module name identity must be built by hand, and such encodings recover expressiveness at the cost of some of the by-construction guarantees that motivate the intrinsic approach.
+The boundaries are therefore the work Free Foil leaves to the integrator rather than expressive impossibilities, and they delimit the languages the current implementation serves without additional machinery.
+
+Other frameworks that treat name resolution as a first-class, language-independent concern make different trade-offs against the same underlying goal.
+Scope graphs and their Statix realization in Spoofax cover non-lexical binding, imports, and rich type systems, but obtain their guarantees through meta-theoretic proof and runtime constraint solving over an extrinsic graph rather than the host type system.
+Both formalize a common conception in the world of programming languages, scope, binding, resolution, and types, so that compiler and analyzer behavior can be derived once and reused, and each occupies a distinct point on the axis between expressive breadth and statically checked correctness.
+The two families are complementary rather than competing.
+
+A Free-Foil-based language server is therefore already practical for study projects, proof assistants, and simple domain-specific languages, where lexical binding suffices and compiler-checked scope safety is valuable.
+Beyond immediate use, it serves as a reference point for how far the intrinsic, type-safe route can be carried into editor tooling, and the limitations identified here, namely cross-file resolution, dependency-driven cache invalidation, incremental type checking, and richer inference, map out concrete directions for further research.
+Tools of this kind, which formalize the recurring structures of programming languages and reuse them across implementations, are how the long-term cost of building language tooling is brought down; the work presented here is a step along that path, and a powerful instrument within the scope it addresses.

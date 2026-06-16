@@ -1,0 +1,13 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{findNarrowest}\PYG{+w}{ }\PYG{o+ow}{::}
+\PYG{+w}{  }\PYG{p}{(}\PYG{+w}{ }\PYG{k+kt}{Bifoldable}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{RangedSig}\PYG{+w}{ }\PYG{n}{sig}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{CoSinkable}\PYG{+w}{ }\PYG{n}{binder}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{FoldablePat}\PYG{+w}{ }\PYG{n}{binder}
+\PYG{+w}{  }\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Distinct}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{p}{)}
+\PYG{+w}{  }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Position}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Maybe}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Either}
+\PYG{+w}{      }\PYG{p}{(}\PYG{k+kt}{SomePattern}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{SomeAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{)}
+\PYG{+w}{      }\PYG{p}{(}\PYG{k+kt}{SomeAST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{))}
+\end{MintedVerbatim}

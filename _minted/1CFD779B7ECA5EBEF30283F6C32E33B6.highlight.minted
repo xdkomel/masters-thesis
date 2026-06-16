@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{inRange}\PYG{+w}{ }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{k+kt}{Position}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Range}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{Bool}
+\PYG{n+nf}{inRange}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Position}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Range}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Position}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Position}\PYG{+w}{ }\PYG{n}{x\PYGZsq{}}\PYG{+w}{ }\PYG{n}{y\PYGZsq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{o+ow}{=}
+\PYG{+w}{  }\PYG{k+kr}{let}\PYG{+w}{ }\PYG{n}{startsOK}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{((}\PYG{n}{l}\PYG{+w}{ }\PYG{o}{/=}\PYG{+w}{ }\PYG{n}{x}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{c}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{))}
+\PYG{+w}{      }\PYG{n}{endsOK}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{p}{((}\PYG{n}{l}\PYG{+w}{ }\PYG{o}{/=}\PYG{+w}{ }\PYG{n}{x\PYGZsq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{c}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{y\PYGZsq{}}\PYG{p}{))}
+\PYG{+w}{  }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{x\PYGZsq{}}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{startsOK}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{endsOK}
+\end{MintedVerbatim}

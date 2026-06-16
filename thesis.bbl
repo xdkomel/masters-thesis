@@ -31,6 +31,45 @@
       \verb https://microsoft.github.io/language-server-protocol/
       \endverb
     \endentry
+    \entry{deBruijn1972}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=c8c9db118200be613ddf80714b8c71d8}{%
+           family={{de Bruijn}},
+           familyi={d\bibinitperiod},
+           given={N.G},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{fullhash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{fullhashraw}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{bibnamehash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{authorbibnamehash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{authornamehash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{authorfullhash}{c8c9db118200be613ddf80714b8c71d8}
+      \strng{authorfullhashraw}{c8c9db118200be613ddf80714b8c71d8}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the “distance” to the binding λ instead of a name attached to that λ. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.}
+      \field{issn}{1385-7258}
+      \field{journaltitle}{Indagationes Mathematicae (Proceedings)}
+      \field{number}{5}
+      \field{title}{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem}
+      \field{volume}{75}
+      \field{year}{1972}
+      \field{pages}{381\bibrangedash 392}
+      \range{pages}{12}
+      \verb{doi}
+      \verb https://doi.org/10.1016/1385-7258(72)90034-0
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/1385725872900340
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/1385725872900340
+      \endverb
+    \endentry
     \entry{freefoil2024}{misc}{}{}
       \name{author}{4}{}{%
         {{hash=bcf69e40c1cad9945d330ad143e3366c}{%
@@ -62,8 +101,8 @@
       \strng{authornamehash}{ababfdb0365e65c5fa7177e71c63020a}
       \strng{authorfullhash}{779d8678f03c4f352b35d83dc58ca862}
       \strng{authorfullhashraw}{779d8678f03c4f352b35d83dc58ca862}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.PL}
@@ -99,8 +138,8 @@
       \strng{authornamehash}{bcf69e40c1cad9945d330ad143e3366c}
       \strng{authorfullhash}{bcf69e40c1cad9945d330ad143e3366c}
       \strng{authorfullhashraw}{bcf69e40c1cad9945d330ad143e3366c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Trends in Functional Programming: 25th International Symposium, TFP 2024, Orange, NJ, USA, January 10–12, 2024}
@@ -145,8 +184,8 @@
       \strng{authornamehash}{b006e888ff1341a25a3fa3ac299d7a99}
       \strng{authorfullhash}{aec5922c3b1e0f9c440d5a8a503c2bf5}
       \strng{authorfullhashraw}{aec5922c3b1e0f9c440d5a8a503c2bf5}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{Correctly manipulating program terms in a compiler is surprisingly difficult because of the need to avoid name capture. The rapier from Peyton&nbsp;Jones and Marlow [9] is a cutting-edge technique for fast, stateless capture-avoiding substitution for expressions represented with explicit names. It is, however, a sharp tool—its invariants are tricky and need to be maintained throughout the whole compiler that uses it. We describe the foil, an elaboration of the rapier that uses Haskell’s type system to enforce the rapier’s invariants statically, preventing a class of hard-to-find bugs, but without adding any run-time overheads.}
@@ -163,6 +202,176 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1145/3587216.3587224
+      \endverb
+    \endentry
+    \entry{scopeGraphs2015}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=423798ac5deb3acda71456131d8c3b30}{%
+           family={Neron},
+           familyi={N\bibinitperiod},
+           given={Pierre},
+           giveni={P\bibinitperiod}}}%
+        {{hash=cec8995218483486de3560603f2e1793}{%
+           family={Tolmach},
+           familyi={T\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+        {{hash=05c571c161af3b68085a0f3a9cb29efa}{%
+           family={Visser},
+           familyi={V\bibinitperiod},
+           given={Eelco},
+           giveni={E\bibinitperiod}}}%
+        {{hash=73524fcbdf9f7cb8c97ad24466c31a23}{%
+           family={Wachsmuth},
+           familyi={W\bibinitperiod},
+           given={Guido},
+           giveni={G\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=02d6346b81238d26cc771c69d33f7a1c}{%
+           family={Vitek},
+           familyi={V\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{7ef971e5d4df80b16ba8b4ad07afdec5}
+      \strng{fullhash}{1851b33832479f06beff94a54543823a}
+      \strng{fullhashraw}{1851b33832479f06beff94a54543823a}
+      \strng{bibnamehash}{1851b33832479f06beff94a54543823a}
+      \strng{authorbibnamehash}{1851b33832479f06beff94a54543823a}
+      \strng{authornamehash}{7ef971e5d4df80b16ba8b4ad07afdec5}
+      \strng{authorfullhash}{1851b33832479f06beff94a54543823a}
+      \strng{authorfullhashraw}{1851b33832479f06beff94a54543823a}
+      \strng{editorbibnamehash}{02d6346b81238d26cc771c69d33f7a1c}
+      \strng{editornamehash}{02d6346b81238d26cc771c69d33f7a1c}
+      \strng{editorfullhash}{02d6346b81238d26cc771c69d33f7a1c}
+      \strng{editorfullhashraw}{02d6346b81238d26cc771c69d33f7a1c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Programming Languages and Systems - 24th European Symposium on Programming, ESOP 2015, Held as Part of the European Joint Conferences on Theory and Practice of Software, ETAPS 2015, London, UK, April 11-18, 2015, Proceedings}
+      \field{series}{Lecture Notes in Computer Science}
+      \field{title}{A Theory of Name Resolution}
+      \field{volume}{9032}
+      \field{year}{2015}
+      \field{pages}{205\bibrangedash 231}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1007/978-3-662-46669-8_9
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/978-3-662-46669-8_9
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/978-3-662-46669-8_9
+      \endverb
+    \endentry
+    \entry{scopesAsTypes2018}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=0064eaa5f773dab9001e3391e0155c83}{%
+           family={Antwerpen},
+           familyi={A\bibinitperiod},
+           given={Hendrik},
+           giveni={H\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+        {{hash=ec57a5a0c6817d3abd359ff08845ea0a}{%
+           family={Bach\bibnamedelima Poulsen},
+           familyi={B\bibinitperiod\bibinitdelim P\bibinitperiod},
+           given={Casper},
+           giveni={C\bibinitperiod}}}%
+        {{hash=0c6a72310ab901041da2e75afb377157}{%
+           family={Rouvoet},
+           familyi={R\bibinitperiod},
+           given={Arjen},
+           giveni={A\bibinitperiod}}}%
+        {{hash=05c571c161af3b68085a0f3a9cb29efa}{%
+           family={Visser},
+           familyi={V\bibinitperiod},
+           given={Eelco},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{890f64e46051ec11af40ab47d130ed80}
+      \strng{fullhash}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \strng{fullhashraw}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \strng{bibnamehash}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \strng{authorbibnamehash}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \strng{authornamehash}{890f64e46051ec11af40ab47d130ed80}
+      \strng{authorfullhash}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \strng{authorfullhashraw}{ba4d7c477de67f27f8cfd9bb9ce753d7}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proc. ACM Program. Lang.}
+      \field{number}{OOPSLA}
+      \field{title}{Scopes as Types}
+      \field{volume}{2}
+      \field{year}{2018}
+      \verb{doi}
+      \verb 10.1145/3276484
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3276484
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3276484
+      \endverb
+    \endentry
+    \entry{spoofax2010}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=994f663e6f39c394d22ede93f60ffdca}{%
+           family={Kats},
+           familyi={K\bibinitperiod},
+           given={Lennart\bibnamedelimb C.\bibnamedelimi L.},
+           giveni={L\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=05c571c161af3b68085a0f3a9cb29efa}{%
+           family={Visser},
+           familyi={V\bibinitperiod},
+           given={Eelco},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Reno/Tahoe, Nevada}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{fullhash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{fullhashraw}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{bibnamehash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{authorbibnamehash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{authornamehash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{authorfullhash}{86e10bac0dc6a733f07427fd36e4c983}
+      \strng{authorfullhashraw}{86e10bac0dc6a733f07427fd36e4c983}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 25th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications, OOPSLA 2010}
+      \field{title}{The Spoofax Language Workbench: Rules for Declarative Specification of Languages and IDEs}
+      \field{year}{2010}
+      \field{pages}{444\bibrangedash 463}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1145/1869459.1869497
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1869459.1869497
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1869459.1869497
       \endverb
     \endentry
     \entry{bound}{misc}{}{}
@@ -184,8 +393,8 @@
       \strng{authornamehash}{da7ed4120ceb3df760a3a6ddf96ae153}
       \strng{authorfullhash}{da7ed4120ceb3df760a3a6ddf96ae153}
       \strng{authorfullhashraw}{da7ed4120ceb3df760a3a6ddf96ae153}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{School of Haskell}
@@ -198,45 +407,6 @@
       \endverb
       \verb{url}
       \verb %7Bhttps://www.schoolofhaskell.com/user/edwardk/bound%7D
-      \endverb
-    \endentry
-    \entry{deBruijn1972}{article}{}{}
-      \name{author}{1}{}{%
-        {{hash=c8c9db118200be613ddf80714b8c71d8}{%
-           family={{de Bruijn}},
-           familyi={d\bibinitperiod},
-           given={N.G},
-           giveni={N\bibinitperiod}}}%
-      }
-      \strng{namehash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{fullhash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{fullhashraw}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{bibnamehash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{authorbibnamehash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{authornamehash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{authorfullhash}{c8c9db118200be613ddf80714b8c71d8}
-      \strng{authorfullhashraw}{c8c9db118200be613ddf80714b8c71d8}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{abstract}{In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the “distance” to the binding λ instead of a name attached to that λ. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.}
-      \field{issn}{1385-7258}
-      \field{journaltitle}{Indagationes Mathematicae (Proceedings)}
-      \field{number}{5}
-      \field{title}{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem}
-      \field{volume}{75}
-      \field{year}{1972}
-      \field{pages}{381\bibrangedash 392}
-      \range{pages}{12}
-      \verb{doi}
-      \verb https://doi.org/10.1016/1385-7258(72)90034-0
-      \endverb
-      \verb{urlraw}
-      \verb https://www.sciencedirect.com/science/article/pii/1385725872900340
-      \endverb
-      \verb{url}
-      \verb https://www.sciencedirect.com/science/article/pii/1385725872900340
       \endverb
     \endentry
     \entry{HOAS}{inproceedings}{}{}
@@ -274,8 +444,8 @@
       \strng{editornamehash}{94015a3f84ae09949252894ccd46b237}
       \strng{editorfullhash}{94015a3f84ae09949252894ccd46b237}
       \strng{editorfullhashraw}{94015a3f84ae09949252894ccd46b237}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{{Proceedings of the {ACM}} SIGPLAN'88 Conference on Programming Language Design and Implementation (PLDI), Atlanta, Georgia, USA, June 22-24, 1988}
@@ -308,8 +478,8 @@
       \strng{authornamehash}{492937bf78fe127aa83523b141859a89}
       \strng{authorfullhash}{492937bf78fe127aa83523b141859a89}
       \strng{authorfullhashraw}{492937bf78fe127aa83523b141859a89}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{Higher-order languages, such as Haskell, encourage the programmer to build abstractions by composing functions. A good compiler must inline many of these calls to recover an efficiently executable program. In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat. The purpose of this paper is, therefore, to articulate the key lessons we learned from a full-scale ``production'' inliner, the one used in the Glasgow Haskell compiler. We focus mainly on the algorithmic aspects, but we also provide some indicative measurements to substantiate the importance of various aspects of the inliner. The "Related File" link above is an earlier tech-report version of the paper, but the JFP version is the one to read (the "View publication" button).}
@@ -325,6 +495,115 @@
       \endverb
       \verb{url}
       \verb https://www.microsoft.com/en-us/research/publication/secrets-of-the-glasgow-haskell-compiler-inliner/
+      \endverb
+    \endentry
+    \entry{nominalSets2002}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e6840da04fe6aec13375c9b853d77687}{%
+           family={Gabbay},
+           familyi={G\bibinitperiod},
+           given={Murdoch\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=a574d10c24f8ad6f78b35c12ff05e2c1}{%
+           family={Pitts},
+           familyi={P\bibinitperiod},
+           given={Andrew\bibnamedelima M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{68bdf883055c28dbfff37790c7975969}
+      \strng{fullhash}{68bdf883055c28dbfff37790c7975969}
+      \strng{fullhashraw}{68bdf883055c28dbfff37790c7975969}
+      \strng{bibnamehash}{68bdf883055c28dbfff37790c7975969}
+      \strng{authorbibnamehash}{68bdf883055c28dbfff37790c7975969}
+      \strng{authornamehash}{68bdf883055c28dbfff37790c7975969}
+      \strng{authorfullhash}{68bdf883055c28dbfff37790c7975969}
+      \strng{authorfullhashraw}{68bdf883055c28dbfff37790c7975969}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Formal Aspects of Computing}
+      \field{number}{3-5}
+      \field{title}{A New Approach to Abstract Syntax with Variable Binding}
+      \field{volume}{13}
+      \field{year}{2002}
+      \field{pages}{341\bibrangedash 363}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1007/s001650200016
+      \endverb
+    \endentry
+    \entry{freshML2003}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=e244c746a825e735df838ef4fcc0b32a}{%
+           family={Shinwell},
+           familyi={S\bibinitperiod},
+           given={Mark\bibnamedelima R.},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=a574d10c24f8ad6f78b35c12ff05e2c1}{%
+           family={Pitts},
+           familyi={P\bibinitperiod},
+           given={Andrew\bibnamedelima M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=e6840da04fe6aec13375c9b853d77687}{%
+           family={Gabbay},
+           familyi={G\bibinitperiod},
+           given={Murdoch\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{13b36969f7b823e9f399806415c865eb}
+      \strng{fullhash}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \strng{fullhashraw}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \strng{bibnamehash}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \strng{authorbibnamehash}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \strng{authornamehash}{13b36969f7b823e9f399806415c865eb}
+      \strng{authorfullhash}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \strng{authorfullhashraw}{21ec1fd46d9d5efc34ebe379d3863bfd}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the Eighth ACM SIGPLAN International Conference on Functional Programming, ICFP 2003}
+      \field{title}{FreshML: Programming with Binders Made Simple}
+      \field{year}{2003}
+      \field{pages}{263\bibrangedash 274}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/944705.944729
+      \endverb
+    \endentry
+    \entry{nominalIsabelle2008}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=7e646f94ce1ca043d93239cb0cf55cdf}{%
+           family={Urban},
+           familyi={U\bibinitperiod},
+           given={Christian},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{fullhash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{fullhashraw}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{bibnamehash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{authorbibnamehash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{authornamehash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{authorfullhash}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \strng{authorfullhashraw}{7e646f94ce1ca043d93239cb0cf55cdf}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Automated Reasoning}
+      \field{number}{4}
+      \field{title}{Nominal Techniques in Isabelle/HOL}
+      \field{volume}{40}
+      \field{year}{2008}
+      \field{pages}{327\bibrangedash 356}
+      \range{pages}{30}
+      \verb{doi}
+      \verb 10.1007/s10817-008-9097-2
       \endverb
     \endentry
     \entry{BirdPaterson1999}{article}{}{}
@@ -522,8 +801,8 @@
       \strng{authornamehash}{401f355b4b8601747f2703d3182e0a8f}
       \strng{authorfullhash}{401f355b4b8601747f2703d3182e0a8f}
       \strng{authorfullhashraw}{401f355b4b8601747f2703d3182e0a8f}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Workshop on ML}
@@ -553,8 +832,8 @@
       \strng{authornamehash}{1ea1efc7a9bb9871e20fe65c4d6280c6}
       \strng{authorfullhash}{1ea1efc7a9bb9871e20fe65c4d6280c6}
       \strng{authorfullhashraw}{1ea1efc7a9bb9871e20fe65c4d6280c6}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Demonstration Abstract : BNF Converter}
@@ -564,6 +843,87 @@
       \endverb
       \verb{url}
       \verb https://api.semanticscholar.org/CorpusID:9335858
+      \endverb
+    \endentry
+    \entry{recursionSchemes1991}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=900d6a577075a7cf7f2e6591ee25000b}{%
+           family={Meijer},
+           familyi={M\bibinitperiod},
+           given={Erik},
+           giveni={E\bibinitperiod}}}%
+        {{hash=991b8525dad7d5f1ab094e66e2acfcac}{%
+           family={Fokkinga},
+           familyi={F\bibinitperiod},
+           given={Maarten},
+           giveni={M\bibinitperiod}}}%
+        {{hash=1f3f8610e67d8b56b596848671113178}{%
+           family={Paterson},
+           familyi={P\bibinitperiod},
+           given={Ross},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{30e93e0921ad6c1e1fe7a2e0bca2879d}
+      \strng{fullhash}{d83e82bbc98fc92bb1028e0ff2264694}
+      \strng{fullhashraw}{d83e82bbc98fc92bb1028e0ff2264694}
+      \strng{bibnamehash}{d83e82bbc98fc92bb1028e0ff2264694}
+      \strng{authorbibnamehash}{d83e82bbc98fc92bb1028e0ff2264694}
+      \strng{authornamehash}{30e93e0921ad6c1e1fe7a2e0bca2879d}
+      \strng{authorfullhash}{d83e82bbc98fc92bb1028e0ff2264694}
+      \strng{authorfullhashraw}{d83e82bbc98fc92bb1028e0ff2264694}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Functional Programming Languages and Computer Architecture, FPCA 1991}
+      \field{series}{Lecture Notes in Computer Science}
+      \field{title}{Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire}
+      \field{volume}{523}
+      \field{year}{1991}
+      \field{pages}{124\bibrangedash 144}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1007/3540543961_7
+      \endverb
+    \endentry
+    \entry{syb2003}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=cb14e43c6697e915f13edfd464040c8e}{%
+           family={Lämmel},
+           familyi={L\bibinitperiod},
+           given={Ralf},
+           giveni={R\bibinitperiod}}}%
+        {{hash=ac370005fbe7908b1923dd54aa4f05b3}{%
+           family={Peyton\bibnamedelima Jones},
+           familyi={P\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{c301270faa6dc81634c0af7b56370029}
+      \strng{fullhash}{c301270faa6dc81634c0af7b56370029}
+      \strng{fullhashraw}{c301270faa6dc81634c0af7b56370029}
+      \strng{bibnamehash}{c301270faa6dc81634c0af7b56370029}
+      \strng{authorbibnamehash}{c301270faa6dc81634c0af7b56370029}
+      \strng{authornamehash}{c301270faa6dc81634c0af7b56370029}
+      \strng{authorfullhash}{c301270faa6dc81634c0af7b56370029}
+      \strng{authorfullhashraw}{c301270faa6dc81634c0af7b56370029}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2003 ACM SIGPLAN International Workshop on Types in Languages Design and Implementation, TLDI 2003}
+      \field{title}{Scrap Your Boilerplate: A Practical Design Pattern for Generic Programming}
+      \field{year}{2003}
+      \field{pages}{26\bibrangedash 37}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/604174.604179
       \endverb
     \endentry
   \enddatalist

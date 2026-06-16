@@ -7,10 +7,11 @@ The goal of my research is to develop an out-of-box solution for a minimal langu
 Given a Foil AST and some signature-dependant functions, it has to compile into a binary communicating via LSP. 
 I would also like to provide a small example-project demonstrating the integration of such a language server into the Visual Studio Code (VS Code) \footnote{\url{https://code.visualstudio.com/}}, an open-source code editor.
 
-The main criterion is the simplicity for an end user. This also means requiring as less boilerplate code as possible. 
+The main criterion is the simplicity for an end user. 
+This also means requiring as less boilerplate code as possible. 
 So that a person wishing to create a proof assistant or a simple programming language for educational or research purposes could have provided the minimal set of functions, while all the heavy-lifting would have lied on the agnostic languages server's shoulders. 
-Specifically, the implementation of LSP methods for symbols definition, renaming, type-checking, and code highlighting. 
-All of the methods above could be implemented by juggling a finite amount of functions traversing the AST.
+Specifically, the implementation of LSP methods for symbols definition, renaming, type-checking, code highlighting, producing diagnostic and hover messages. 
+All of the methods above could be implemented by juggling a finite amount of functions.
 
 \subsection{Deprioritized Criteria}
 
@@ -25,24 +26,22 @@ Rather it only implies the performance and extensibility must not come in contra
 To assess whether the proposed language server framework meets its design goals, the following criteria will be used:
 
 \begin{enumerate}
-  \item \textbf{Integration Simplicity}: The number of functions an end user must implement to create a working language server. 
-  A successful implementation should require no more than six core functions (as defined in \texttt{ALSConfiguration}) with minimal boilerplate code.
-  
-  \item \textbf{Feature Completeness}: The framework must support essential LSP features including \textit{go-to-definition}, \textit{find-references}, \textit{rename-symbol}, \textit{hover}, and \textit{syntax highlighting}. 
+  \item \textbf{Feature Completeness}: The framework must support essential LSP features including \textit{go-to-definition}, \textit{symbol renaming}, \textit{showing hover and diagnostic messages}, \textit{type checking}, and \textit{syntax highlighting}. 
   Each feature should function correctly when the corresponding user-provided functions are implemented.
+
+  \item \textbf{Minimal Entry Threshold}: The framework must provide dummy implementations for the type classes' functions where possible to minimize time required for the first (featureless) language server launch.
   
-  \item \textbf{Correctness}: Symbol resolution must accurately trace variable definitions to their usages within the correct scope. 
-  The \texttt{TermTelescope} structure should correctly represent scope extensions and variable bindings without false positives or negatives.
+  \item \textbf{Correctness}: Symbol resolution must accurately trace variable definitions to their usages within the correct scope.
   
   \item \textbf{Language Agnosticism}: The framework should work with at least two distinct language implementations without modification to the core server logic. 
   This demonstrates the \texttt{binder} and \texttt{sig} parameterization achieves true abstraction.
   
-  \item \textbf{Response Time}: While performance is deprioritized, LSP requests should complete within 500ms for typical source files (~1000 lines) to maintain acceptable user experience in VS Code.
+  \item \textbf{Worst-Case Complexity}: While performance is deprioritized, every server operation must run in at most linear time in the size of the syntax tree ($O(K)$). A linear bound is unavoidable for whole-file operations such as syntax highlighting and diagnostics, which must visit every node to produce their output; requiring it of every operation ensures the library introduces no super-linear behavior of its own, while leaving room for individual operations to do better.
   
   \item \textbf{VS Code Integration}: The example project must demonstrate successful integration with Visual Studio Code, with all supported LSP features accessible through the editor's standard interface.
 \end{enumerate}
 
-These criteria will be evaluated through the implementation of the example project mentioned in Section~\ref{chap:met}, as well as through unit tests for core functionality such as scope tracking and name resolution.
+These criteria will be evaluated through the implementation of the example project mentioned in Section~\ref{chap:met}.
 
 \section{Language Server Methods}
 
@@ -54,7 +53,7 @@ However, parsing the AST must be a user's task since the language server is supp
 
 Some languages may represent programs as a list of declarations.
 From the scope-tracking view, these are programs where the scopes gets injected manually to an expression according to the whole project's context.
-The program, hence, is defined as a set of expressions—not a nested structure. 
+The program, hence, is defined as a set of expressions, not a nested structure. 
 Scope management in these scenarios becomes more sophisticated compared to the nested one-expression case.
 Yet it's still possible to produce a Free Foil AST leaving a single expression representing a whole program afterwards, turning it into a list of expressions each with a distinct scope is also a solution.
 In terms of an agnostic language server producing a list of trees from a given \texttt{String} input is a cheap yet powerful modification comparing to limiting it to a single element allowing for more user customizations without a requirement to extend the second-order abstract syntax signature. 
@@ -62,191 +61,545 @@ In terms of an agnostic language server producing a list of trees from a given \
 The function producing Free Foil ASTs from a given input is defined as the following:
 
 \begin{minted}[breaklines=true]{haskell}
-type FunBuildASTs binder sig 
-  = String 
-  -> [SomeScopedAST binder sig]
+buildAsts :: String -> [SomeScopeWithAST binder sig]
 \end{minted}
 
-\texttt{SomeScopedAST} is parametrized by a \texttt{binder} and \texttt{sig} but it also introduces an existential variable \texttt{n} which makes any function referring to the \texttt{SomeScopedAST} independent of the concrete phantom type parameter \texttt{n} while also preserving the relation of the \texttt{AST binder sig n} to the scope \texttt{Scope n}.
+\texttt{SomeScopeWithAST} is parametrized by a \texttt{binder} and \texttt{sig} but it also introduces an existential variable \texttt{n} which makes any function referring to the \texttt{SomeScopedAST} independent of the concrete phantom type parameter \texttt{n} while also preserving the relation of the \texttt{AST binder sig n} to the scope \texttt{Scope n}.
 
 \begin{minted}[breaklines=true]{haskell}
-data SomeScopedAST binder sig where
-  SomeScopedAST :: Distinct n 
+data SomeScopeWithAST binder sig where
+  SomeScopeWithAST :: (Distinct n) 
     => Scope n 
     -> AST binder sig n 
-    -> SomeScopedAST binder sig
+    -> SomeScopeWithAST binder sig
 \end{minted}
 
-\subsection{Finding a Node}
+\subsection{Agnostic Tree Traversal}
+\label{subsec:agnostic_traversal}
 
-The first operation required for any language server is to map the location of the user cursor, the line and column numbers, to a node in the AST.
-The BNFC represents the AST nodes as Haskell \texttt{Functor}s parameterized by their location like so:
+A central challenge in building a language-agnostic server on top of Free-Foil is traversing an \texttt{AST binder sig n} without knowing the concrete types of \texttt{binder} or \texttt{sig}.
+A term is either a free variable \texttt{Var} or a \texttt{Node} whose immediate children are encoded by the signature:
 
 \begin{minted}[breaklines=true]{haskell}
-type BNFC'Position = Maybe (Int, Int)
-type ASTNode = ASTNode' BNFC'Position
-data ASTNode' a = AnASTNode a [ASTChild' a]
-  deriving 
-    ( Eq
-    , Ord
-    , Show
-    , Read
-    , Functor
-    , Foldable
-    , Traversable
-    )
+data AST binder sig n where
+  Var :: Foil.Name n -> AST binder sig n
+  Node 
+    :: sig (ScopedAST binder sig n) (AST binder sig n) 
+    -> AST binder sig n
+data ScopedAST binder sig n where
+  ScopedAST :: binder n l -> AST binder sig l -> ScopedAST binder sig n
 \end{minted}
 
-These locations can be stored in the Free Foil AST's signature annotations.
-However, the BNFC does not provide the ending positions for nodes, even for identifiers. 
-So for an end user finding a name means traversing the AST and picking the narrowest child for which the positions range must be somehow computed first.
-The good news is the naïve implementation for a symbol written horizontally having the form of \texttt{((x, y), (x + symbolLength, y))} unlocks functionality enough for a bunch of language server features related to names!
+The first type argument of \texttt{sig} carries scoped children, sub-expressions placed under a binder of the form \texttt{ScopedAST binder sig n}, while the second carries plain sub-expressions \texttt{AST binder sig n}.
+Without additional constraints, the signature is entirely opaque to the server.
 
-Another struggle imposed by the Free Foil design is the disability to provide an annotation for a \texttt{Var}. 
-Since only \texttt{Node}s are annotated by the signature, one can only have access to the \texttt{Name} represented by a given variable, which is essentially just an integer value. 
-Even though it makes impossible to use Foil \texttt{Var}s for anything but scope tracking, the easiest solution would be to come up with a variable-\texttt{Node} wrapper. 
-It is a user's task to produce concrete syntax and convert it to a Foil AST, hence, the user could've wrapped \texttt{Var}s into specific variable-\texttt{Node}s to make them locatable.
-It is not so much an unsafe decision as it is unreliable for an end user to always believe a random \texttt{Node} might always be a \texttt{Var} in disguise.
-Luckily, it is up to a user to decide how to exactly make the \texttt{Node}s locatable and to pick the proper representation.
-
-The function searching for nodes is defined as:
+The \texttt{Bifoldable} type class provides the ability to fold over both argument positions of \texttt{sig} in a single pass:
 
 \begin{minted}[breaklines=true]{haskell}
-type FunFindNarrowest binder sig 
-  = (Int, Int) 
-  -> SomeScopedAST binder sig 
-  -> Maybe (SomeScopedAST binder sig)
+class Bifoldable t where
+  bifoldl :: (c -> a -> c) -> (c -> b -> c) -> c -> t a b -> c
 \end{minted}
 
-At the same time an auxiliary function is used to extract a name from any node if the narrowest node happens to be a \texttt{Var} or a Node dedicated to directly wrap a Free Foil variable, thus, making it locatable as discussed earlier:
+A call to \texttt{bifoldl} dispatches two callbacks, one for scoped children and one for plain sub-expressions, threading an accumulator through all of them.
+Applying this recursively yields a fully generic depth-first traversal requiring no knowledge of the grammar:
 
 \begin{minted}[breaklines=true]{haskell}
-type FunExtractName binder sig 
-  = SomeScopedAST binder sig 
-  -> Maybe (SomeName binder sig)
+traverseAST
+  :: (Bifoldable sig)
+  => (forall n. Foil.Name n -> acc -> acc)
+  -> (forall n. AST binder sig n -> acc -> acc)
+  -> acc -> AST binder sig n -> acc
+traverseAST onVar _ acc (Var name) = onVar name acc
+traverseAST onVar onNode acc (Node sig) =
+  bifoldl
+    (\a (ScopedAST _binder body) -> traverseAST onVar onNode a body)
+    (\a subterm -> traverseAST onVar onNode a subterm)
+    (onNode (Node sig) acc)
+    sig
 \end{minted}
 
-\subsection{Tracing a Name}
-\label{section:tracing_a_name}
+The constraint \texttt{Bifoldable sig} is the only structural requirement for a complete read-only walk of the tree.
 
-To find any symbol's definition and its further usages requires traversing the AST and collecting \texttt{Node}s with the consequent binders and, eventually, \texttt{Var}s referring to the queried name.
-The structure storing these relations can have a form:
+Complementarily, the \texttt{Bifunctor} type class provides \texttt{bimap}, which transforms both child positions of \texttt{sig} simultaneously:
 
 \begin{minted}[breaklines=true]{haskell}
-data TermTelescope binder sig n where
-  LeafTerm :: Distinct n 
-    => AST binder sig n 
-    -> TermTelescope binder sig n
-  NodeTerm :: (Distinct n, DExt n l, CoSinkable binder) 
-    => AST binder sig n -- The term 
-    -> binder n l -- The term's binder
-    -> [TermTelescope binder sig l] -- Scoped [NodeTerm]s
-    -> TermTelescope binder sig n
+class Bifunctor t where
+  bimap :: (a -> c) -> (b -> d) -> t a b -> t c d
 \end{minted}
 
-One \texttt{TermTelescope} matches a single expression containing all nested \texttt{Node}s, extending the scope, and variables, supposedly, as leaves.
-The end user builds a \texttt{TermTelescope} for each expression, and later the structure is traversed to match a specific \texttt{Name}.
-\texttt{TermTelescope}s allow to select only nodes extending the scope and variables, which can be used to find a name's definition or trace its usages generally.
-Thus, one \texttt{TermTelescope} can be used to build a structure focusing on the definition of some name.
-\texttt{Some} data types wrap the scope phantom type parameter to indicate the scope of the resulting expression is of any scope.
+This enables a generic rewriting pass over the AST, where every node is rebuilt after its children have been transformed:
 
 \begin{minted}[breaklines=true]{haskell}
-data SomeName binder sig where
-  SomeName :: Distinct n 
-    => Name n 
-    -> SomeName binder sig
-
-data Family binder sig = Family
-  { parent :: SomeScopedAST binder sig
-  , children :: [SomeScopedAST binder sig]
-  , name :: SomeName binder sig
-  }
+mapAST
+  :: (Bifunctor sig)
+  => (forall n. AST binder sig n -> AST binder sig n)
+  -> AST binder sig n -> AST binder sig n
+mapAST _ (Var name) = Var name
+mapAST f (Node sig) = f $ Node $
+  bimap
+    (\(ScopedAST binder body) -> ScopedAST binder (mapAST f body))
+    (mapAST f)
+    sig
 \end{minted}
 
-The binder concrete implementation is unknown, in contrast, it is only said to be \texttt{CoSinkable} making it available to extend any scope independent of the language's specification.
+When a particular algorithm additionally needs to extract information from a node, such as a source location or a construct's display name, the signature can be required to implement a further type class that exposes that information.
 
-In a program one expression can produce multiple branches of scope-extension resulting in a list of \texttt{TermTelescope}s. For instance, if the expression is a pair of lambdas—\texttt{(λ a . a, λ b. b)}—the AST gets divided in two \texttt{TermTelescope}s right away. 
-Thus, a function building \texttt{TermTelescope}s from a single AST may look like:
+Together, folding with \texttt{Bifoldable}, mapping with \texttt{Bifunctor}, and targeted extraction via ad-hoc type classes cover the full space of operations a language server needs to perform on the AST.
+Every server-side algorithm can be formulated as a combination of these, with the constraints serving as a precise, type-checked contract between the generic server and the concrete language implementation.
+The server core requires no modification when a new language is plugged in; the user only provides type class instances alongside their concrete \texttt{binder} and \texttt{sig}.
+
+\subsection{Locating a Node}
+
+Mapping a cursor position, a line and column pair, to the narrowest AST node that covers it is the starting point for nearly every language server feature.
+Go-to-definition, hover messages, and rename all begin by answering the question of what the user is pointing at.
+The server cannot hard-code how location information is stored, because it knows nothing about the concrete grammar, so two type classes expose it from the two structural roles a user type can play.
+
+\paragraph{Making signature nodes locatable.}
+The \texttt{RangedSig} class asks a fully-applied signature value to report its source range:
 
 \begin{minted}[breaklines=true]{haskell}
-type FunBuildTelescopes binder sig 
-  = forall n . Distinct n 
-  => Scope n 
-  -> AST binder sig n 
-  -> [TermTelescope binder sig n]
+class RangedSig sig where
+  range :: sig (ScopedAST binder sig n) (AST binder sig n) -> Maybe Range
+  range = const Nothing
 \end{minted}
 
-The function introduces an existential phantom type parameter that signifies the \texttt{AST binder sig n} exists in the \texttt{Scope n}.
-Moreover, in the resulting list of \texttt{TermTelescope}s, each shares the same \texttt{Scope n}. 
-It is impossible for a \texttt{TermTelescope} in this scenario to be parametrized by a different scope type parameter as this would have meant another \texttt{NodeTerm} parametrized by a narrower scope with a consequent binder introduced the name.
-Moreover, the function operates with a specific \texttt{Scope} and \texttt{AST} in contrast to passing a \texttt{SomeScopedAST} it resembles so much to explicitly parametrize them with the same type parameter as the resulting \texttt{TermTelescope}s to foster the correct and predictable scope-management.
+The default returns \texttt{Nothing}, so a user who has not yet annotated any constructor still gets a server that compiles and runs; the position search simply will not descend past un-ranged nodes.
 
-\subsection{Node Into a Range}
+\paragraph{Making pattern nodes locatable.}
+Binder patterns have kind \texttt{S -> S -> *}, so \texttt{Data.Foldable} cannot be derived for them.
+A dedicated class is therefore needed:
 
-TODO
+\begin{minted}[breaklines=true]{haskell}
+class FoldablePat pat where
+  foldrPat :: (SomePattern pat sig -> r -> r) -> r -> pat n l -> r
+  rangePat :: pat n l -> Maybe Range
+  binderOf :: pat n l -> Maybe (NameBinder n l)
+\end{minted}
+
+\texttt{foldrPat} walks the sub-patterns of a composite binder; \texttt{rangePat} returns its source range; and \texttt{binderOf} retrieves the single \texttt{NameBinder} at this level of the pattern, if any.
+All three methods have placeholder defaults that produce empty results, keeping the class optional to launch the language server but required to support most of the LSP features.
+
+\paragraph{Pattern structure requirement.}
+The return type of \texttt{binderOf} is \texttt{Maybe (NameBinder n l)}, reflecting how Free Foil represents scope transitions.
+A binder \texttt{pat n l} moves from scope \texttt{n} to scope \texttt{l} through a single \texttt{NameBinder n l}, introducing exactly one name at that level.
+Multiple bound names are accumulated by chaining binder levels: the output scope of one level becomes the input scope of the next.
+A pattern that binds several names in parallel must therefore be structured as a linked sequence of single-binder levels rather than a flat node holding several names simultaneously; only then can \texttt{foldrPat} visit each introduced name independently and \texttt{binderOf} return a well-typed \texttt{NameBinder} at each step.
+
+\paragraph{The \texttt{Var} wrapper problem.}
+A Free-Foil \texttt{Var} carries only a \texttt{Name}, an integer, and no annotation of any kind.
+Source ranges can be attached exclusively to \texttt{Node}s through the signature.
+A plain \texttt{Var} is therefore invisible to any position-based search: the server cannot locate it, and neither can it retrieve its position after the fact.
+
+The natural remedy is to introduce a dedicated var-wrapper constructor in the signature: a \texttt{Node} whose sole child is the variable it wraps.
+Because the wrapper is a \texttt{Node} it can carry a range; because it has exactly one \texttt{Var} child, the server can reliably extract the underlying \texttt{Name} from it.
+The user is responsible for inserting these wrappers when converting concrete syntax to the Free-Foil AST; a language implementation that omits them will find name extraction unreliable, making go-to-definition, hover look-up for variables, and rename non-functional, while features that do not depend on name resolution, such as diagnostics and highlighting, continue to work.
+
+\paragraph{Range testing and the search algorithm.}
+With location information in place, testing whether a position falls inside a range reduces to boundary comparisons on lines and columns:
+
+\begin{minted}[breaklines=true]{haskell}
+inRange :: Position -> Range -> Bool
+inRange (Position l c) (Range (Position x y) (Position x' y')) =
+  let startsOK = ((l /= x) || (c >= y))
+      endsOK = ((l /= x') || (c <= y'))
+  in l >= x && l <= x' && startsOK && endsOK
+\end{minted}
+
+The predicate handles positions that share a line with a range boundary by additionally checking the column.
+
+\texttt{findNarrowest} combines \texttt{RangedSig}, \texttt{FoldablePat}, and \texttt{Bifoldable} to walk the AST and return the smallest node or pattern covering the requested position:
+
+\begin{minted}[breaklines=true]{haskell}
+findNarrowest :: 
+  ( Bifoldable sig
+  , RangedSig sig
+  , CoSinkable binder
+  , FoldablePat binder
+  , Distinct n )
+  => Position
+  -> AST binder sig n
+  -> Maybe (Either 
+      (SomePattern binder sig, SomeAST binder sig) 
+      (SomeAST binder sig))
+\end{minted}
+
+The result is \texttt{Nothing} when no ranged node covers the position.
+Otherwise a \texttt{Left} value indicates the narrowest match is a pattern (together with its enclosing AST node for context), while \texttt{Right} means it is a plain signature node.
+The algorithm uses \texttt{Bifoldable} to fold over the scoped and plain children of each \texttt{Node}, recursing only into children that pass the \texttt{inRange} test, and keeping whichever candidate has the smallest covering range.
+
+Once the narrowest node is found, \texttt{extractName} attempts to read a \texttt{Name} from it by looking for the single \texttt{Var} child a var-wrapper node is expected to contain:
+
+\begin{minted}[breaklines=true]{haskell}
+extractName :: (Bifoldable sig, Distinct n, CoSinkable binder)
+  => AST binder sig n -> Maybe (SomeName binder sig)
+\end{minted}
+
+A naked \texttt{Var} passed directly returns \texttt{Nothing}, because the server expects to receive a \texttt{Node}, but a var-wrapper node yields \texttt{Just} the wrapped \texttt{Name}.
+The pair of \texttt{findNarrowest} and \texttt{extractName} is the shared prologue for all name-sensitive operations: locate the narrowest node, then ask whether it wraps a variable.
+
+\subsection{Name Definition and References}
+\label{section:name_definition_and_references}
+
+The two most prominent name-sensitive LSP features, go-to-definition and rename, share a common core: given a \texttt{Name} extracted from the node under the cursor, find the binder that introduces it, and then collect every node in the binding's scope that refers back to it.
+Both tasks require a traversal that is aware of how scope evolves as it descends the tree.
+
+\paragraph{Locating a definition.}
+A \texttt{Name} in Free-Foil is an integer indexed by a phantom scope parameter \texttt{n}.
+Membership is cheap: \texttt{n `member` scope} returns \texttt{True} exactly when \texttt{n} belongs to \texttt{scope}.
+The definition search exploits this by starting at the tree's root with its initial scope and descending into \texttt{ScopedAST} children, extending the running scope with each binder it crosses.
+The moment the extended scope contains the target name, the most recently crossed binder is the one that introduced it, and its associated body is the subtree in which that name is live.
+
+The search is split across two functions.
+\texttt{findDefinition} is the entry point.
+It first checks whether the name is already a member of the starting scope and returns \texttt{Nothing} if so, because a name that is already free in the current expression has no definition inside this tree:
+
+\begin{minted}[breaklines=true]{haskell}
+findDefinition isValid (SomeName n) scope ast
+  | n `member` scope = Nothing
+  | otherwise =
+      findDefinition' isValid (SomeName n) scope ast
+\end{minted}
+
+\texttt{findDefinition'} is the recursive worker.
+Using \texttt{Bifoldable}, it folds over each \texttt{ScopedAST binder body} child of a \texttt{Node}: the binder is used to extend the running scope, membership is checked, and if the name now belongs to the extended scope the binder and body are returned as the result.
+When the name is still absent from the extended scope, the worker recurses into the body.
+Plain (non-scoped) children are recursed into without changing the scope at all.
+
+Both functions accept an additional validity predicate:
+
+\begin{minted}[breaklines=true]{haskell}
+findDefinition ::
+  ( Distinct n
+  , Bifoldable sig
+  , CoSinkable binder )
+  => (forall m .
+        sig (ScopedAST binder sig m)
+            (AST binder sig m)
+        -> Bool)
+  -> SomeName binder sig
+  -> Scope n
+  -> AST binder sig n
+  -> Maybe
+      ( SomePattern binder sig
+      , SomeAST binder sig )
+\end{minted}
+
+The predicate tests a fully-applied signature node to decide whether a candidate binder should be accepted.
+Its primary purpose is to disambiguate parallel scopes.
+Two sibling \texttt{ScopedAST} branches can independently introduce names with the same integer identity (since each starts from the same parent scope).
+Without additional filtering, the traversal might return the wrong binder.
+A natural disambiguator is range coverage: a binder qualifies only if its enclosing node contains the cursor position, which at most one sibling can satisfy if source ranges are non-overlapping.
+The predicate is caller-supplied and language-agnostic; the functions themselves impose no constraint on what criterion is used.
+
+\paragraph{Collecting references.}
+After the definition is found, the rename and find-all-references operations need every node inside the binding body that refers to the same name.
+Two functions handle this, mirroring the definition-search pair.
+
+\texttt{findRefs'} tests the current node and then recurses into its children.
+A node counts as a reference if it is a var-wrapper whose single \texttt{Var} child carries the same integer identity as the target name:
+
+\begin{minted}[breaklines=true]{haskell}
+findRefs' ::
+  ( Distinct m
+  , Bifoldable sig
+  , CoSinkable binder )
+  => SomeName binder sig
+  -> AST binder sig m
+  -> [SomeAST binder sig]
+\end{minted}
+
+The integer comparison is sound because the binder that introduces the target name is an ancestor of every node in its body, so the name is already in scope throughout the subtree.
+Foil's \texttt{withFresh} always allocates an identifier beyond those currently in scope, so it can never reassign the target's identifier to another binder inside the body; and the parallel-sibling collisions discussed in Section~\ref{chap:impl} only reuse identifiers allocated within the body, which are necessarily distinct from the already-in-scope target.
+No unrelated occurrence can therefore share the target's identifier.
+
+\texttt{findRefs} is the symmetric counterpart: it skips testing the node it receives and dispatches directly to \texttt{findRefs'} on all children via \texttt{bifoldMap}.
+The split avoids double-counting when a caller already holds a root node known to be a reference and is only interested in collecting its descendants.
+
+\paragraph{Composing definition and reference search.}
+The two pairs are designed to compose.
+A go-to-definition query calls \texttt{findDefinition} to obtain the binder pattern, then extracts its source range via \texttt{FoldablePat}.
+A rename query calls \texttt{findDefinition} to obtain the definition's body, passes that body to \texttt{findRefs}, and collects the range of every returned wrapper-node to build the complete set of edit locations.
+The same combination is equally applicable to a find-all-references request.
+Since neither function depends on any language-specific type class beyond \texttt{Bifoldable} and \texttt{CoSinkable}, both pairs are available for any Free-Foil AST without modification to the core server.
+The concrete handler logic that wires these building blocks into LSP responses is discussed in the implementation chapter.
 
 \subsection{Type Checking}
+\label{section:type_checking}
 
-TODO
+Type checking in the agnostic language server follows a bidirectional strategy: type expectations are propagated downward from a parent node to its children, while inferred types are returned upward as results.
+The user supplies the language-specific deduction rules; the server handles the recursive descent and name-map bookkeeping.
+Three type classes divide this responsibility.
 
-\subsection{Code Highlighting}
-
-TODO
-
-\section{Language Server Configuration}
-
-The configuration required to run a language server is defined as:
+\paragraph{Reading types back.}
+Once a node or pattern has been annotated with a type, two simple classes expose that annotation:
 
 \begin{minted}[breaklines=true]{haskell}
-data ALSConfiguration binder sig = ALSConfiguration
-  { fileExtension :: String
-  , buildAsts :: FunBuildASTs binder sig
-  , findNarrowest :: FunFindNarrowest binder sig
-  , extractName :: FunExtractName binder sig
-  , buildTelescopes :: FunBuildTelescopes binder sig
-  , findRange :: FunRange binder sig
-  }
+class TypedSig sig ty where
+  ty :: sig (ScopedAST binder sig n) (AST binder sig n) -> ty
+class TypedPat pat ty where
+  patTy :: pat n l -> ty
+  addPattern :: pat n l -> NameMap n ty -> NameMap l ty
 \end{minted}
 
+\texttt{TypedSig} extracts the inferred type from any fully-applied signature node.
+\texttt{TypedPat} does the same for binder patterns; its second method, \texttt{addPattern}, extends the running name map with the types of the names the pattern introduces, making them available for type-checking the body.
 
-% Referencing other chapters \ref{chap:lr}, \ref{chap:met}, \ref{chap:impl}, \ref{chap:eval} and \ref{chap:conclusion}
-% \begin{longtable}{c|c}
-% \caption[This is the title I want to appear in the List of Tables]{Simulation Parameters} \label{table:thisimulation_params} \\
-% \hline
-% A & B  \\
-% \hline
-% \endfirsthead
-% \multicolumn{2}{@{}l}{} \\
-% \hline
-% A & B \\
-% \hline
-% \endhead
-% \hline
-%  \textbf{Parameter} & \textbf{Value}\\
-%  \hline
-%  Number of vehicles & $|\mathcal{V}|$\\
-%  \hline
-%  Number of RSUs & $|\mathcal{U}|$\\
-%  \hline
-%  RSU coverage radius & 150 m\\
-%  \hline
-%  V2V communication radius & 30 m\\
-%  \hline
-%  Smart vehicle antenna height & 1.5 m\\
-%  \hline
-%  RSU antenna height & 25 m\\
-%  \hline
-%  Smart vehicle maximum speed & $v_{max}$ m/s\\
-%  \hline
-%  Smart vehicle minimum speed & $v_{min}$ m/s\\
-%  \hline
-%  Common smart vehicle cache capacities & $[50, 100, 150, 200, 250]$ mb\\
-%  \hline
-%  Common RSU cache capacities & $[5000,1000,1500,2000,2500]$ mb\\
-%  \hline
-%  Common backhaul rates & $[75, 100, 150]$ mb/s\\
-%  \hline
-% \end{longtable}
+\paragraph{Specifying deduction rules.}
+The central class is \texttt{TypeDeductiveSig}:
 
+\begin{minted}[breaklines=true]{haskell}
+class TypeDeductiveSig sig sig' ty binder where
+  deduceType
+    :: ty
+    -> sig
+        (ty, ty -> (ScopedAST binder sig' n, ty))
+        (ty -> (AST binder sig' n, ty))
+    -> sig' (ScopedAST binder sig' n) (AST binder sig' n)
+\end{minted}
 
-% \ldots
+The first argument \texttt{ty} is the expected type for the node as a whole, namely what the node's context demands.
+The second argument is the signature with its children already transformed into continuations: each plain child becomes a function \texttt{ty -> (AST ..., ty)}, and each scoped child becomes a pair of its pattern type together with a similar function over the body.
+Calling a child's continuation with some type expectation produces both the recursively-checked subtree and its inferred type.
+The implementation of \texttt{deduceType} is therefore a pure decision procedure: given the expected type and the child continuations, decide which type to demand of each child, force those continuations, and assemble the output node with a freshly annotated second field.
+
+\paragraph{Orchestrating the recursion.}
+The generic \texttt{typecheck} function ties the classes together:
+
+\begin{minted}[breaklines=true]{haskell}
+typecheck ::
+  ( Bifunctor sig
+  , TypeDeductiveSig sig sig' ty binder
+  , TypedSig sig' ty
+  , TypedPat binder ty
+  , Distinct n
+  , CoSinkable binder )
+  => NameMap n ty -> ty -> AST binder sig n -> AST binder sig' n
+typecheck nm typ = \case
+  Var n -> Var n
+  Node sig -> Node $ deduceType typ $ bimap
+    (\(ScopedAST binder a) -> case assertDistinct binder of
+      Distinct ->
+        let f = first (ScopedAST binder)
+              . check (addPattern binder nm) a
+        in (patTy binder, f))
+    (check nm)
+    sig
+\end{minted}
+
+A \texttt{Var} node carries no type annotation and is left unchanged; its type will be looked up in the name map whenever a parent's continuation requests it.
+For a \texttt{Node}, \texttt{bimap} converts every child in the raw signature into a continuation: plain children become \texttt{check nm}, which recursively calls \texttt{typecheck} and then reads back the inferred type; scoped children are paired with the pattern type from \texttt{patTy} and wrapped so that calling them extends the name map via \texttt{addPattern} before the recursive descent.
+The transformed signature is then handed to \texttt{deduceType}, which contains all language-specific logic.
+
+\paragraph{Example: checking a function application.}
+Consider the expression \texttt{(\textbackslash x : Int . x) 42} under the expectation that the whole expression has type \texttt{Int}.
+In a concrete implementation, this is an \texttt{AppF} node whose two children are the lambda and the integer constant.
+After \texttt{bimap} runs, \texttt{deduceType} receives:
+
+\begin{minted}[breaklines=true]{haskell}
+AppF a a'
+  xOf   -- :: Type -> (AST ..., Type)
+  yOf   -- :: Type -> (AST ..., Type)
+\end{minted}
+
+The \texttt{AppF} clause then proceeds as follows:
+
+\begin{minted}[breaklines=true]{haskell}
+AppF a a' xOf yOf ->
+  let (y, yTy) = yOf anyTypeEmp
+      (x, xTy) = xOf (FunType funTypeAnnEmp yTy exTy)
+      xReturnTy = case xTy of
+        FunType _ _ r -> r
+        _ -> anyTypeEmp
+      (t, errs) = resolveType exTy xReturnTy
+  in AppF a (NodeAnn a' t errs) x y
+\end{minted}
+
+First, the argument \texttt{42} is checked with no expectation (\texttt{anyTypeEmp}), yielding type \texttt{Int}.
+Then the function \texttt{\textbackslash x : Int . x} is checked under the expectation \texttt{Int -> Int}, constructed from the argument type just inferred and the overall expected type \texttt{Int}.
+The lambda confirms type \texttt{Int -> Int}, so its return type is \texttt{Int}.
+The last step is to compare the inferred return type against the overall expectation.
+This requires a user-supplied \texttt{resolveType} function that takes an expected type and an inferred type and returns the resolved type together with any mismatch errors.
+A straightforward implementation simply checks equality:
+
+\begin{minted}[breaklines=true]{haskell}
+resolveType :: Type -> Type -> (Type, [String])
+resolveType expected inferred
+  | expected == anyTypeEmp = (inferred, [])
+  | expected == inferred   = (inferred, [])
+  | otherwise = (expected,
+      ["expected " ++ show expected
+       ++ ", got " ++ show inferred])
+\end{minted}
+
+When the expected type is absent (\texttt{anyTypeEmp}), the inferred type is accepted outright.
+When they match, no error is recorded.
+Otherwise, a mismatch message is stored in the annotation's error list, which later surfaces as a diagnostic.
+More sophisticated languages may unify or subtype rather than check equality, but the interface is the same: given two types, produce a resolved type and any errors.
+
+\subsection{Code Highlighting}
+\label{section:code_highlighting}
+
+Code highlighting is based on semantic tokens: a flat list of tokens, each annotated with a type (keyword, variable, function, number, etc.) and a source range, which the editor colors according to its theme.
+Unlike syntax-based highlighting, which operates on raw text, semantic tokens are produced from the fully parsed AST, enabling token types that depend on context, such as distinguishing a local variable from a function name.
+
+\paragraph{Why two type classes are needed.}
+An AST has two structurally distinct components that may carry token information: the signature nodes in \texttt{sig} and the binder patterns in \texttt{binder}.
+A lambda's keyword token belongs to the node, while the pattern variable's token belongs to the binder.
+Because both are opaque to the server, two separate type classes expose them:
+
+\begin{minted}[breaklines=true]{haskell}
+class TokenizableSig sig where
+  tokenize
+    :: sig ScopedASTTokens ASTTokens
+    -> [SemanticTokenAbsolute]
+  tokenize = const []
+class TokenizablePat pat where
+  tokenizePat :: pat n l -> [SemanticTokenAbsolute]
+  tokenizePat = const []
+\end{minted}
+
+Both methods have placeholder defaults that return an empty list, so a user who has not yet implemented highlighting still gets a server that compiles and runs correctly, and the feature degrades gracefully to no highlighting.
+
+\paragraph{Token list types.}
+The child positions of \texttt{sig} are replaced by their already-computed token lists before \texttt{tokenize} is called.
+This requires naming those replacement types:
+
+\begin{minted}[breaklines=true]{haskell}
+type ASTTokens = [SemanticTokenAbsolute]
+type ScopedASTTokens = (ASTTokens, ASTTokens)
+\end{minted}
+
+\texttt{ASTTokens} stands for the token list produced by a plain child.
+\texttt{ScopedASTTokens} is a pair: the first component carries the tokens emitted by the binder pattern (\texttt{tokenizePat}), and the second carries those emitted by the body (\texttt{tokenizeAST}).
+Together they give \texttt{tokenize} access to every token from every descendant, in addition to whatever tokens the node itself contributes (e.g.\ keyword punctuation stored in the node's annotation).
+
+\paragraph{Generic traversal.}
+The recursive descent is implemented once by the library using \texttt{Bifunctor}:
+
+\begin{minted}[breaklines=true]{haskell}
+tokenizeAST
+  :: (Bifunctor sig, TokenizableSig sig, TokenizablePat binder)
+  => AST binder sig n
+  -> [SemanticTokenAbsolute]
+tokenizeAST = \case
+  Var{} -> []
+  Node node ->
+    tokenize $ bimap tokenizeScopedAST tokenizeAST node
+  where
+    tokenizeScopedAST (ScopedAST pat body) =
+      (tokenizePat pat, tokenizeAST body)
+\end{minted}
+
+\texttt{bimap} replaces every child in the signature simultaneously, substituting scoped children with their \texttt{ScopedASTTokens} pairs and plain children with their \texttt{ASTTokens} lists, before the result is handed to the user-supplied \texttt{tokenize}.
+A bare \texttt{Var} contributes no tokens on its own: location and token type are attached to the enclosing var-wrapper node through the signature, which is handled by the \texttt{Node} branch.
+
+\paragraph{Ordering constraint.}
+Semantic tokens are encoded as position deltas, where each token is positioned relative to the previous one rather than in absolute coordinates.
+A consequence is that any token whose start position precedes the end of the token before it in the list is silently dropped.
+The token list produced by \texttt{tokenizeAST} must therefore be in source order.
+
+The \texttt{bimap}-based design delegates ordering responsibility to the user's \texttt{tokenize} implementation.
+Given the pre-computed token lists for each child, the user concatenates them in the order they appear in the source.
+This is natural: the user knows the grammar and can write the children's lists in left-to-right order directly.
+An alternative, collecting all tokens and sorting by position, would also be correct but incurs an \(O(K \log K)\) cost and obscures the structure.
+The \texttt{bimap} approach keeps the algorithm \(O(K)\) and lets the user exploit grammatical knowledge to avoid the sort entirely.
+
+\subsection{Diagnostics}
+\label{section:diagnostics}
+
+Diagnostics are the inline error, warning, and hint messages that an editor displays alongside source code, such as underlines, gutter icons, and problem-panel entries.
+Unlike hover messages, which are produced on demand in response to a cursor position, diagnostics are pushed by the server proactively whenever the contents of a file change.
+The server walks the entire AST, collects a flat list of \texttt{Diagnostic} values, and publishes them to the editor in one notification.
+
+\paragraph{Why two type classes are needed.}
+The structural reason is identical to that for hover and highlighting.
+An AST contains two kinds of opaque components, signature nodes in \texttt{sig} and binder patterns in \texttt{binder}, and the server cannot inspect either without a type class.
+A pattern such as a let-binding might carry a type-annotation mismatch diagnostic, while a node such as a function application might carry a return-type error.
+Keeping the two roles separate lets the user attach diagnostics to whichever component holds the relevant information:
+
+\begin{minted}[breaklines=true]{haskell}
+class DiagnosableSig sig where
+  diagnose
+    :: sig (ScopedAST binder sig n) (AST binder sig n)
+    -> [Diagnostic]
+  diagnose = const []
+class DiagnosablePat pat where
+  diagnosePat :: pat n l -> [Diagnostic]
+  diagnosePat = const []
+\end{minted}
+
+Both methods default to returning an empty list.
+A user who has not yet implemented any diagnostic logic still obtains a server that compiles and runs; the feature degrades gracefully to silence.
+
+\paragraph{What the user provides.}
+\texttt{diagnose} and \texttt{diagnosePat} return fully assembled \texttt{Diagnostic} values.
+A \texttt{Diagnostic} is a structured LSP record carrying, at minimum, a source range and a human-readable message, and optionally a severity level (error, warning, information, or hint), a diagnostic code, and a source label.
+Because the appropriate severity and range differ by construct and by language, the user is responsible for building the record; the server provides no further wrapping.
+The type-checking pass described in Section~\ref{section:type_checking} is a natural source of diagnostics: the user-supplied type-resolution function stores any mismatch messages directly in node annotations, from which \texttt{diagnose} can extract them.
+
+\paragraph{Generic traversal.}
+The collection pass mirrors the structure used for highlighting.
+\texttt{diagnoseAST} uses \texttt{Bifoldable} to visit every node and every binder pattern in a single depth-first walk, accumulating the lists produced at each step:
+
+\begin{minted}[breaklines=true]{haskell}
+diagnoseAST ::
+  ( CoSinkable binder
+  , Bifoldable sig
+  , DiagnosableSig sig
+  , DiagnosablePat binder )
+  => AST binder sig n -> [Diagnostic]
+diagnoseAST = \case
+  Var _ -> []
+  Node n -> diagnose n ++ bifoldMap
+    (\(ScopedAST binder a) ->
+      diagnosePat binder ++ diagnoseAST a)
+    diagnoseAST
+    n
+\end{minted}
+
+A bare \texttt{Var} contributes nothing; its diagnostic, if any, belongs to the enclosing var-wrapper node in the signature.
+For a \texttt{Node}, the traversal first calls \texttt{diagnose} on the node itself to collect any diagnostics the user attached at this level, then uses \texttt{bifoldMap} to recurse into the scoped children, calling \texttt{diagnosePat} on each binder and \texttt{diagnoseAST} on each body, and into the plain children.
+The result is a flat list of all diagnostics in the tree.
+
+Running \texttt{diagnoseAST} over every tree stored in the file cache and concatenating the results produces the complete diagnostic list for a file, which the server then publishes in a single \texttt{textDocument/publishDiagnostics} notification.
+
+\subsection{Hover Messages}
+\label{section:hover_messages}
+
+Hover messages are the documentation popups an editor displays when the user rests the cursor over a symbol.
+They typically show type information, a brief description, or any other language-specific annotation the implementation chooses to expose.
+Unlike diagnostics, which the server pushes proactively on every file change, hover content is produced on demand: the editor sends a single request carrying a cursor position, and the server must respond with a \texttt{MarkupContent} value, or nothing if the position does not correspond to a hoverable construct.
+
+The production of a hover message therefore decomposes into two independent steps.
+First, the server identifies which AST node the cursor is pointing at by calling \texttt{findNarrowest}, whose algorithm was described in \S\ref{subsec:agnostic_traversal} and builds on the location infrastructure introduced there.
+Second, it asks that node what, if anything, it has to say.
+The second step is language-specific and is therefore delegated to two type classes, one for each structural role an opaque component can play.
+
+\paragraph{Why two type classes are needed.}
+The structural reason mirrors that for diagnostics and highlighting.
+Hover-relevant information may reside in a signature node, for instance a function-application node annotated with the inferred return type, or in a binder pattern, for instance a let-binding pattern that stores the declared type of the bound name.
+Because the server cannot inspect either component directly, two separate classes expose the relevant content:
+
+\begin{minted}[breaklines=true]{haskell}
+class HoverableSig sig where
+  hoverData
+    :: sig (ScopedAST binder sig n) (AST binder sig n)
+    -> [String]
+  hoverData = const []
+class HoverablePat pat where
+  hoverDataPat :: pat n l -> [String]
+  hoverDataPat = const []
+\end{minted}
+
+Both methods default to the empty list, so a user who has not yet implemented hover support still obtains a server that compiles and runs; the feature degrades gracefully to silence.
+
+\paragraph{What the user provides.}
+\texttt{hoverData} and \texttt{hoverDataPat} return a list of strings, namely the lines to display for that construct.
+The user need not deal with the LSP wire format: the library concatenates these lines into a single Markdown message and wraps it as the \texttt{MarkupContent} value the protocol expects, so the user supplies only the content.
+The type-checking pass described in Section~\ref{section:type_checking} is a natural source of that content: the annotation stored on a node after type-checking already contains the inferred type, which \texttt{hoverData} can return as a line directly.
+
+\paragraph{Producing the message.}
+Once \texttt{findNarrowest} has identified the construct under the cursor, the server asks it for content directly: if the narrowest match is a binder pattern it calls \texttt{hoverDataPat}, and if it is a signature node it calls \texttt{hoverData}.
+A var-wrapper node needs no special treatment, because type checking annotates each node in place and the var-wrapper already carries the information to surface (typically the variable's inferred type), so \texttt{hoverData} returns it without any separate definition lookup.
+The lines returned by whichever method fired are concatenated into a single Markdown message and sent to the editor; an empty result yields no hover, which the editor interprets as "nothing to show here."
+The server core requires no modification when a new language is plugged in; the user only provides \texttt{HoverableSig} and \texttt{HoverablePat} instances alongside their concrete \texttt{binder} and \texttt{sig}.

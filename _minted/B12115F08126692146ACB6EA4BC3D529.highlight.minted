@@ -1,0 +1,13 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{tokenizeAST}
+\PYG{+w}{  }\PYG{o+ow}{::}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{Bifunctor}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{TokenizableSig}\PYG{+w}{ }\PYG{n}{sig}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{TokenizablePat}\PYG{+w}{ }\PYG{n}{binder}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o+ow}{=\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{AST}\PYG{+w}{ }\PYG{n}{binder}\PYG{+w}{ }\PYG{n}{sig}\PYG{+w}{ }\PYG{n}{n}
+\PYG{+w}{  }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{p}{[}\PYG{k+kt}{SemanticTokenAbsolute}\PYG{p}{]}
+\PYG{n+nf}{tokenizeAST}\PYG{+w}{ }\PYG{o+ow}{=}\PYG{+w}{ }\PYG{n+nf}{\PYGZbs{}}\PYG{k+kr}{case}
+\PYG{+w}{  }\PYG{k+kt}{Var}\PYG{p}{\PYGZob{}\PYGZcb{}}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{k+kt}{[]}
+\PYG{+w}{  }\PYG{k+kt}{Node}\PYG{+w}{ }\PYG{n}{node}\PYG{+w}{ }\PYG{o+ow}{\PYGZhy{}\PYGZgt{}}
+\PYG{+w}{    }\PYG{n}{tokenize}\PYG{+w}{ }\PYG{o}{\PYGZdl{}}\PYG{+w}{ }\PYG{n}{bimap}\PYG{+w}{ }\PYG{n}{tokenizeScopedAST}\PYG{+w}{ }\PYG{n}{tokenizeAST}\PYG{+w}{ }\PYG{n}{node}
+\PYG{+w}{  }\PYG{k+kr}{where}
+\PYG{+w}{    }\PYG{n}{tokenizeScopedAST}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{ScopedAST}\PYG{+w}{ }\PYG{n}{pat}\PYG{+w}{ }\PYG{n}{body}\PYG{p}{)}\PYG{+w}{ }\PYG{o+ow}{=}
+\PYG{+w}{      }\PYG{p}{(}\PYG{n}{tokenizePat}\PYG{+w}{ }\PYG{n}{pat}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tokenizeAST}\PYG{+w}{ }\PYG{n}{body}\PYG{p}{)}
+\end{MintedVerbatim}
