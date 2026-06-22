@@ -457,6 +457,89 @@
       \verb 10.1145/53990.54010
       \endverb
     \endentry
+    \entry{phoas2008}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=5049db5a826d93c36901bc4d6130fe37}{%
+           family={Chlipala},
+           familyi={C\bibinitperiod},
+           given={Adam},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{fullhash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{fullhashraw}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{bibnamehash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{authorbibnamehash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{authornamehash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{authorfullhash}{5049db5a826d93c36901bc4d6130fe37}
+      \strng{authorfullhashraw}{5049db5a826d93c36901bc4d6130fe37}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 13th ACM SIGPLAN International Conference on Functional Programming, ICFP 2008}
+      \field{number}{9}
+      \field{series}{SIGPLAN Notices}
+      \field{title}{Parametric Higher-Order Abstract Syntax for Mechanized Semantics}
+      \field{volume}{43}
+      \field{year}{2008}
+      \field{pages}{143\bibrangedash 156}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1145/1411203.1411226
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1411203.1411226
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1411203.1411226
+      \endverb
+    \endentry
+    \entry{boxesBananas2008}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=b824e9ee6b86b90c3522db2284f45e58}{%
+           family={Washburn},
+           familyi={W\bibinitperiod},
+           given={Geoffrey},
+           giveni={G\bibinitperiod}}}%
+        {{hash=3f642b13226889983d127e216adb623d}{%
+           family={Weirich},
+           familyi={W\bibinitperiod},
+           given={Stephanie},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{f59248efddda96f89a006c483e573c9e}
+      \strng{fullhash}{f59248efddda96f89a006c483e573c9e}
+      \strng{fullhashraw}{f59248efddda96f89a006c483e573c9e}
+      \strng{bibnamehash}{f59248efddda96f89a006c483e573c9e}
+      \strng{authorbibnamehash}{f59248efddda96f89a006c483e573c9e}
+      \strng{authornamehash}{f59248efddda96f89a006c483e573c9e}
+      \strng{authorfullhash}{f59248efddda96f89a006c483e573c9e}
+      \strng{authorfullhashraw}{f59248efddda96f89a006c483e573c9e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Functional Programming}
+      \field{number}{1}
+      \field{title}{Boxes Go Bananas: Encoding Higher-Order Abstract Syntax with Parametric Polymorphism}
+      \field{volume}{18}
+      \field{year}{2008}
+      \field{pages}{87\bibrangedash 140}
+      \range{pages}{54}
+      \verb{doi}
+      \verb 10.1017/S0956796807006557
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1017/S0956796807006557
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1017/S0956796807006557
+      \endverb
+    \endentry
     \entry{haskellCompilerSecrets}{article}{}{}
       \name{author}{2}{}{%
         {{hash=ac370005fbe7908b1923dd54aa4f05b3}{%
@@ -768,17 +851,56 @@
       \strng{authornamehash}{27a1013b1889c63360dfaa3df5d63d0c}
       \strng{authorfullhash}{27a1013b1889c63360dfaa3df5d63d0c}
       \strng{authorfullhashraw}{27a1013b1889c63360dfaa3df5d63d0c}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Nieuw archief voor wisenkunde}
+      \field{journaltitle}{Nieuw Archief voor Wiskunde}
       \field{month}{01}
       \field{title}{Introduction to lambda calculus}
       \field{volume}{4}
       \field{year}{1984}
       \field{pages}{337\bibrangedash 372}
       \range{pages}{36}
+    \endentry
+    \entry{ghostsOfDepartedProofs2018}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=8598d5481ce7573a31baebdfdd127134}{%
+           family={Noonan},
+           familyi={N\bibinitperiod},
+           given={Matt},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{fullhash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{fullhashraw}{8598d5481ce7573a31baebdfdd127134}
+      \strng{bibnamehash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{authorbibnamehash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{authornamehash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{authorfullhash}{8598d5481ce7573a31baebdfdd127134}
+      \strng{authorfullhashraw}{8598d5481ce7573a31baebdfdd127134}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 11th ACM SIGPLAN International Symposium on Haskell}
+      \field{series}{Haskell 2018}
+      \field{title}{Ghosts of Departed Proofs (Functional Pearl)}
+      \field{year}{2018}
+      \field{pages}{119\bibrangedash 131}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1145/3242744.3242755
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3242744.3242755
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3242744.3242755
+      \endverb
     \endentry
     \entry{OkasakiGill1998}{inproceedings}{}{}
       \name{author}{2}{}{%
@@ -811,6 +933,217 @@
       \field{pages}{77\bibrangedash 86}
       \range{pages}{10}
     \endentry
+    \entry{secondOrderEquational2010}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=043d5c96c5db9d9fc4388fe324b620b4}{%
+           family={Fiore},
+           familyi={F\bibinitperiod},
+           given={Marcelo},
+           giveni={M\bibinitperiod}}}%
+        {{hash=c6f471b1ae613731bf37fb4c9de85db3}{%
+           family={Hur},
+           familyi={H\bibinitperiod},
+           given={Chung-Kil},
+           giveni={C\bibinithyphendelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{fullhash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{fullhashraw}{6733135b6735e2c1cff7088c4272258a}
+      \strng{bibnamehash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{authorbibnamehash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{authornamehash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{authorfullhash}{6733135b6735e2c1cff7088c4272258a}
+      \strng{authorfullhashraw}{6733135b6735e2c1cff7088c4272258a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Computer Science Logic, 24th International Workshop, CSL 2010}
+      \field{series}{Lecture Notes in Computer Science}
+      \field{title}{Second-Order Equational Logic (Extended Abstract)}
+      \field{volume}{6247}
+      \field{year}{2010}
+      \field{pages}{320\bibrangedash 335}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1007/978-3-642-15205-4_26
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/978-3-642-15205-4_26
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/978-3-642-15205-4_26
+      \endverb
+    \endentry
+    \entry{formalMetatheorySoas2022}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=043d5c96c5db9d9fc4388fe324b620b4}{%
+           family={Fiore},
+           familyi={F\bibinitperiod},
+           given={Marcelo},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b9d1c5a51ee91f58d15648fc6153b0ac}{%
+           family={Szamozvancev},
+           familyi={S\bibinitperiod},
+           given={Dmitrij},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{fullhash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{fullhashraw}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{bibnamehash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{authorbibnamehash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{authornamehash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{authorfullhash}{42acf65df6a6d990838e95d156bdcf50}
+      \strng{authorfullhashraw}{42acf65df6a6d990838e95d156bdcf50}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the ACM on Programming Languages}
+      \field{number}{POPL}
+      \field{title}{Formal Metatheory of Second-Order Abstract Syntax}
+      \field{volume}{6}
+      \field{year}{2022}
+      \verb{doi}
+      \verb 10.1145/3498715
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3498715
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3498715
+      \endverb
+    \endentry
+    \entry{datatypesAlaCarte2008}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=4ef018cfdc047b2a3577499d839bede3}{%
+           family={Swierstra},
+           familyi={S\bibinitperiod},
+           given={Wouter},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{fullhash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{fullhashraw}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{bibnamehash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{authorbibnamehash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{authornamehash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{authorfullhash}{4ef018cfdc047b2a3577499d839bede3}
+      \strng{authorfullhashraw}{4ef018cfdc047b2a3577499d839bede3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Functional Programming}
+      \field{number}{4}
+      \field{title}{Data Types à la Carte}
+      \field{volume}{18}
+      \field{year}{2008}
+      \field{pages}{423\bibrangedash 436}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1017/S0956796808006758
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1017/S0956796808006758
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1017/S0956796808006758
+      \endverb
+    \endentry
+    \entry{relativeMonads2015}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=90877ea5f7e44778ae02b3d3954a7a1e}{%
+           family={Altenkirch},
+           familyi={A\bibinitperiod},
+           given={Thorsten},
+           giveni={T\bibinitperiod}}}%
+        {{hash=ccdd3669aff26ae10f05232050c4c807}{%
+           family={Chapman},
+           familyi={C\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ee50513d1a9288cce2900f00506e9fe4}{%
+           family={Uustalu},
+           familyi={U\bibinitperiod},
+           given={Tarmo},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{4fe41711a6b8bcd22ba9c4436c0da033}
+      \strng{fullhash}{0d51e8dac2c0303070f050e626ad2168}
+      \strng{fullhashraw}{0d51e8dac2c0303070f050e626ad2168}
+      \strng{bibnamehash}{0d51e8dac2c0303070f050e626ad2168}
+      \strng{authorbibnamehash}{0d51e8dac2c0303070f050e626ad2168}
+      \strng{authornamehash}{4fe41711a6b8bcd22ba9c4436c0da033}
+      \strng{authorfullhash}{0d51e8dac2c0303070f050e626ad2168}
+      \strng{authorfullhashraw}{0d51e8dac2c0303070f050e626ad2168}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Logical Methods in Computer Science}
+      \field{number}{1}
+      \field{title}{Monads Need Not Be Endofunctors}
+      \field{volume}{11}
+      \field{year}{2015}
+      \verb{doi}
+      \verb 10.2168/LMCS-11(1:3)2015
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.2168/LMCS-11(1:3)2015
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.2168/LMCS-11(1:3)2015
+      \endverb
+    \endentry
+    \entry{templateHaskell2002}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=df86c731af4fe9a008ba08ee140463a7}{%
+           family={Sheard},
+           familyi={S\bibinitperiod},
+           given={Tim},
+           giveni={T\bibinitperiod}}}%
+        {{hash=ac370005fbe7908b1923dd54aa4f05b3}{%
+           family={Peyton\bibnamedelima Jones},
+           familyi={P\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{fullhash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{fullhashraw}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{bibnamehash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{authorbibnamehash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{authornamehash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{authorfullhash}{cf6d02f044e3c2524aae8974544bf6ec}
+      \strng{authorfullhashraw}{cf6d02f044e3c2524aae8974544bf6ec}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2002 ACM SIGPLAN Workshop on Haskell}
+      \field{series}{Haskell 2002}
+      \field{title}{Template Metaprogramming for {Haskell}}
+      \field{year}{2002}
+      \field{pages}{1\bibrangedash 16}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1145/581690.581691
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/581690.581691
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/581690.581691
+      \endverb
+    \endentry
     \entry{ForsbergRanta2004}{inproceedings}{}{}
       \name{author}{2}{}{%
         {{hash=2c89ff0b9b4b13adeb3932e5e7c4510a}{%
@@ -832,8 +1165,8 @@
       \strng{authornamehash}{1ea1efc7a9bb9871e20fe65c4d6280c6}
       \strng{authorfullhash}{1ea1efc7a9bb9871e20fe65c4d6280c6}
       \strng{authorfullhashraw}{1ea1efc7a9bb9871e20fe65c4d6280c6}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Demonstration Abstract : BNF Converter}
@@ -874,8 +1207,8 @@
       \strng{authornamehash}{30e93e0921ad6c1e1fe7a2e0bca2879d}
       \strng{authorfullhash}{d83e82bbc98fc92bb1028e0ff2264694}
       \strng{authorfullhashraw}{d83e82bbc98fc92bb1028e0ff2264694}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Functional Programming Languages and Computer Architecture, FPCA 1991}
@@ -913,8 +1246,8 @@
       \strng{authornamehash}{c301270faa6dc81634c0af7b56370029}
       \strng{authorfullhash}{c301270faa6dc81634c0af7b56370029}
       \strng{authorfullhashraw}{c301270faa6dc81634c0af7b56370029}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the 2003 ACM SIGPLAN International Workshop on Types in Languages Design and Implementation, TLDI 2003}

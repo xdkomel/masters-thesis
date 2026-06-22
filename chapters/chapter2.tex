@@ -10,7 +10,10 @@ Various approaches to preventing this issue have been developed, each with trade
 
 The simplest approach, often called "naïve substitution," \cite{bound} uses explicit variable names and requires careful renaming during substitution to avoid capture. While intuitive, this approach is error-prone and inefficient as it requires maintaining and checking against a global context of variable names. De Bruijn indices \cite{deBruijn1972} offer an alternative by replacing names with numeric indices representing binding distance. This solves name capture but creates other issues: terms become difficult to read, and substitution still requires traversing the entire abstract syntax tree (AST) to adjust indices.
 
-Higher-Order Abstract Syntax (HOAS) \cite{HOAS} leverages the host language's binding mechanisms, providing excellent safety but often at the cost of expressiveness when implementing algorithms that need to inspect or transform bound variables. The "rapier" technique used in the Glasgow Haskell Compiler \cite{haskellCompilerSecrets} offers better efficiency by maintaining a stateless local scope and performing capture-avoiding substitution in one pass. However, as noted by Maclaurin et al. \cite{foil2023}, it lacks type safety, making it easy to forget scope extensions or necessary renamings when implementing complex language features.
+Higher-Order Abstract Syntax (HOAS) \cite{HOAS} leverages the host language's binding mechanisms, providing excellent safety but often at the cost of expressiveness when implementing algorithms that need to inspect or transform bound variables. 
+Variants of HOAS address some of these limitations: Parametric HOAS \cite{phoas2008} threads a type parameter through every binding position, ruling out exotic terms while keeping the approach implementable in a conventional type system, and the boxes-go-bananas encoding \cite{boxesBananas2008} similarly uses parametric polymorphism to achieve a sound embedding. 
+Nevertheless, both variants retain the core HOAS difficulty of working under binders. 
+The "rapier" technique used in the Glasgow Haskell Compiler \cite{haskellCompilerSecrets} offers better efficiency by maintaining a stateless local scope and performing capture-avoiding substitution in one pass. However, as noted by Maclaurin et al. \cite{foil2023}, it lacks type safety, making it easy to forget scope extensions or necessary renamings when implementing complex language features.
 
 A separate family, the nominal techniques, treats names themselves as the primitive notion. Building on the nominal sets of Gabbay and Pitts \cite{nominalSets2002}, systems such as FreshML \cite{freshML2003} and Nominal Isabelle \cite{nominalIsabelle2008} provide first-class support for binding, fresh-name generation, and reasoning modulo $\alpha$-equivalence, mainly in functional programming and proof-assistant settings. They offer strong meta-theoretic guarantees but enforce freshness dynamically or through dedicated logical infrastructure rather than through the host language's type system, as the intrinsically typed representations below do.
 
@@ -34,6 +37,7 @@ Kmett's \texttt{bound} library \footnote{\url{https://hackage.haskell.org/packag
 The Foil \cite{foil2023} resolves the efficiency-safety trade-off by combining the stateless, single-pass algorithm of the rapier with strong type-level guarantees. 
 It implements the Barendregt convention \cite{Barendregt}, claiming all bound variables to be distinct and different from free variables, with type safety.
 The Foil achieves this by indexing all expressions, names, and scopes with phantom a type parameter \texttt{S} that represents the current set of in-scope variables. 
+Using phantom types to carry compile-time evidence without runtime cost is a technique known as "ghosts of departed proofs" \cite{ghostsOfDepartedProofs2018}, and the Foil is a systematic application of it to scope safety.
 \texttt{S} is defined as \haskell{data S = VoidS}
 
 So every entity in the Foil's representation is scope-indexed by a kind \haskell{S}:
@@ -91,7 +95,8 @@ Despite its advantages, the Foil requires manually writing syntax representation
 
 \subsection{Free Foil}
 
-Free Foil bridges the gap between generic syntax representation and efficient, type-safe substitution. It combines Kudasov's free scoped monads \cite{freemonads2024} with the Foil to automatically generate well-scoped syntax with capture-avoiding substitution from a language's second-order signature.
+Free Foil bridges the gap between generic syntax representation and efficient, type-safe substitution. 
+It combines Kudasov's free scoped monads \cite{freemonads2024} with the Foil to automatically generate well-scoped syntax with capture-avoiding substitution from a language's second-order signature, a notion whose equational theory and formal metatheory are developed in \cite{secondOrderEquational2010, formalMetatheorySoas2022}.
 The core idea is to parameterize abstract syntax additionally by a bifunctorial signature \texttt{sig} that distinguishes between regular sub-terms and scoped sub-terms (those that may access newly bound variables) and, additionally, by the \texttt{binder}:
 
 \begin{minted}[breaklines=true]{haskell}
@@ -114,6 +119,8 @@ data ExprF scope term
 type Expr = AST NameBinder ExprF
 \end{minted}
 
+Because \texttt{sig} is an abstract type parameter, this representation also supports the data-types-à-la-carte approach \cite{datatypesAlaCarte2008}: a coproduct of two signatures can be passed as \texttt{sig}, allowing independent language features to be composed rather than defined in a single monolithic type.
+
 \texttt{CoSinkable} typeclass introduces \texttt{coSinkabilityProof} to support patterns. Given a renaming function and a pattern, it provides a renaming function for the variables bound by the pattern, and a refreshed version of the pattern, hence, making sure variables in patterns are refreshed properly to avoid name capture.
 
 The key innovation is that Free Foil inherits the Foil's efficient substitution algorithm while maintaining complete type safety. The \texttt{Sinkable} instance for \texttt{AST} enables zero-cost scope extensions, and capture-avoiding substitution is derived generically:
@@ -128,9 +135,11 @@ substitute :: (Bifunctor sig, Distinct o, CoSinkable binder, SinkableK binder)
   -> AST binder sig o
 \end{minted}
 
-Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction \cite{freefoil2024}, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
+Unlike free scoped monads that use nested De Bruijn indices, Free Foil eliminates the need for explicit index manipulation, dramatically improving performance while maintaining the same level of type safety. 
+The \texttt{substitute} and \texttt{Var} operations are reminiscent of the bind and unit of a monad; formally, the type \texttt{AST' sig n = Scope n -> AST binder sig n} can be given the structure of a relative monad \cite{relativeMonads2015}, a generalization of monads to functors that do not necessarily map a category to itself. 
+Benchmarks show that while Free Foil is slightly slower than direct Foil implementations due to the additional layer of abstraction \cite{freefoil2024}, it outperforms nested De Bruijn approaches by orders of magnitude for complex terms.
 
-Additionally, Free Foil supports a template-based approach where scope-safe representations can be automatically derived from naïve AST definitions using Template Haskell, allowing seamless integration with parser generators like BNF Converter (BNFC) \cite{ForsbergRanta2004}.
+Additionally, Free Foil supports a template-based approach where scope-safe representations can be automatically derived from naïve AST definitions using Template Haskell \cite{templateHaskell2002}, allowing seamless integration with parser generators like BNF Converter (BNFC) \cite{ForsbergRanta2004}.
 
 Because a Free Foil signature is an ordinary bifunctor, traversals over the resulting syntax can reuse standard datatype-generic programming techniques instead of bespoke recursion. Generic traversal has a long lineage in Haskell, from recursion schemes over the fixed point of a functor \cite{recursionSchemes1991} to Scrap Your Boilerplate \cite{syb2003}. Free Foil fits this tradition: deriving \haskell{Bifunctor} and \haskell{Bifoldable} for a signature suffices to fold over every node of any language's syntax, which is exactly the property the IDE features in this thesis rely on to stay language-agnostic.
 

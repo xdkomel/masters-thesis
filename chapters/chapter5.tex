@@ -14,7 +14,7 @@ The Flan language server exercises all six simultaneously: go-to-definition and 
 
 \subsection{Minimal Entry Threshold}
 
-Every type class method carries a default returning a neutral value, so the only strictly mandatory inputs are \texttt{fileExtension} and \texttt{buildAsts} in \texttt{LSConfiguration}.
+Every method in the non-type-checking classes carries a default returning a neutral value, so the only strictly mandatory inputs are \texttt{fileExtension} and \texttt{buildAsts} in \texttt{LSConfiguration}.
 Features degrade gracefully: supplying only \texttt{RangedSig} and \texttt{FoldablePat} immediately enables go-to-definition and rename; each subsequent pair of instances adds the next feature without touching what is already working.
 The type-checking classes are a partial exception: because they are parameterized over a user-supplied type \texttt{ty} the library cannot default, omitting them simply means no type-checking support, and all other features are unaffected.
 

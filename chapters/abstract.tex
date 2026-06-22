@@ -2,7 +2,7 @@
 
 Name capture during expression substitution remains a critical challenge in programming language implementation and formal verification.
 While the Free-Foil framework resolves this issue and automatically generates type-safe syntax, it currently lacks dedicated tooling for rapid IDE integration.
-To address this gap, I present a prototype of an agnostic language server built on Free-Foil that implements core Language Server Protocol (LSP) features: syntax highlighting, diagnostics, hover information, go-to-definition, renaming, and type checking, while requiring little effort from the language author.
+To address this gap, this thesis presents a prototype of an agnostic language server built on Free-Foil that implements core Language Server Protocol (LSP) features: syntax highlighting, diagnostics, hover information, go-to-definition, renaming, and type checking, while requiring little effort from the language author.
 Each feature is enabled by implementing a small set of type classes over the language's signature and binders, which keeps tree traversal and scope management inside a reusable library.
 A worst-case analysis shows that every server algorithm runs in at most linear time relative to the syntax tree size.
 The work also identifies the limitations of the current implementation and directions for extending it.

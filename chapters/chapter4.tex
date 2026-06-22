@@ -159,8 +159,8 @@ The position-based predicate approach requires no modifications to either the li
 \section{Example Project}
 
 The agnostic language server was tested by integrating it with two toy programming languages: LambdaPi, a dependently typed lambda calculus with $\Pi$-types, and Flan (Functional LANguage).
-Flan exercises the full feature set of the library: type checking, diagnostics, hover messages, semantic highlighting, go-to-definition, and rename.
-It is the primary integration example.
+Flan exercises the full feature set of the library: type checking, diagnostics, hover messages, semantic highlighting, go-to-definition, and rename; it is the primary integration example.
+LambdaPi serves as a minimal counterpart: it provides only \texttt{TokenizableSig} and \texttt{TokenizablePat} instances for syntax highlighting, with all other classes left at their no-op defaults, showing how little is needed to reach a first running server.
 
 \subsection{Signature and Annotations}
 

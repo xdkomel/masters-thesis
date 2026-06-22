@@ -4,7 +4,8 @@
 This thesis set out to carry Free Foil's compile-time scope safety across the LSP boundary into a single, configuration-driven language server, and the result demonstrates that this is achievable.
 By parameterizing the server over an opaque \texttt{binder} and bifunctor \texttt{sig} and expressing every operation in terms of \texttt{Bifoldable}, \texttt{Bifunctor}, and a small set of targeted type classes, the library absorbs all tree traversal, scope extension, and name resolution.
 A language integrator supplies 15 functions to activate the full feature set, only one of which, the irreducibly language-specific parser invoked by \texttt{buildAsts}, falls outside the \texttt{sig}/\texttt{binder} contract.
-Two unrelated languages, LambdaPi and Flan, were served without modifying any core module, confirming that the \texttt{binder}/\texttt{sig} parameterization achieves genuine language agnosticism.
+Two unrelated languages were served without modifying any core module, confirming that the \texttt{binder}/\texttt{sig} parameterization achieves genuine language agnosticism.
+Flan exercises the full feature set and shows what a complete integration looks like; LambdaPi provides only syntax highlighting, relying on no-op defaults for everything else, and shows how little is required to reach a first running state.
 
 The approach inherits Free Foil's central strength: scope violations become compile-time type errors rather than latent runtime bugs.
 Using Haskell's type system to encode the in-scope set as a phantom kind, and using the host language to describe a target language's syntax through a second-order signature, turns a normally bespoke and error-prone layer into reusable, statically checked infrastructure.
